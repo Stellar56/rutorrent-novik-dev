@@ -329,9 +329,7 @@ if($handle = opendir('../plugins'))
 				$info = getPluginInfo( $file, $permissions );
 				if($info) 
 				{
-					if(     $info["plugin.may_be_launched"] && 
-						getFlag($permissions,$file,"enabled")=="user-defined")
-					{
+if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="user-defined") {
 					        $info["perms"] |= $canBeLaunched;
 						if(!$userPermissions[$file])
 						{
@@ -526,3 +524,5 @@ if($handle = opendir('../plugins'))
 }
 
 cachedEcho($jResult,"application/javascript",true);
+
+?>

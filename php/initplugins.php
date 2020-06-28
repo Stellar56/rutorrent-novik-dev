@@ -16,28 +16,33 @@ execute = {sh,-c,/usr/local/bin/php /usr/local/www/rt/php/initplugins.php user_n
 if( !chdir( dirname( __FILE__ ) ) )
         exit();
 
-function pluginsSort($a, $b) { 
+function pluginsSort($a, $b)
+{ 
 	$lvl1 = (float) $a["level"];
 	$lvl2 = (float) $b["level"];
-if($lvl1>$lvl2)
+	if($lvl1>$lvl2)
 		return(1);
-if($lvl1<$lvl2)	
+	if($lvl1<$lvl2)	
 		return(-1);
-		return( strcmp($a["name"],$b["name"]) );
+	return( strcmp($a["name"],$b["name"]) );
 }
 
-function getFlag($permissions,$pname,$fname) {
+function getFlag($permissions,$pname,$fname)
+{
 	$ret = true;
-if(array_key_exists($pname,$permissions) && array_key_exists($fname,$permissions[$pname]))
-	$ret = $permissions[$pname][$fname];
-else
-if(array_key_exists("default",$permissions) && array_key_exists($fname,$permissions["default"]))
-	$ret = $permissions["default"][$fname];
-		return($ret);
+	if(array_key_exists($pname,$permissions) &&
+		array_key_exists($fname,$permissions[$pname]))
+		$ret = $permissions[$pname][$fname];
+	else
+	if(array_key_exists("default",$permissions) &&
+		array_key_exists($fname,$permissions["default"]))
+		$ret = $permissions["default"][$fname];
+	return($ret);
 }
 
-function getPluginInfo($name, $permissions) {
-    $info = array( 
+function getPluginInfo( $name, $permissions )
+{
+        $info = array( 
 		'rtorrent.php.error'=>array(),
 		'rtorrent.external.error'=>array(),
 		'rtorrent.script.error'=>array(),
@@ -48,32 +53,35 @@ function getPluginInfo($name, $permissions) {
 		'php.version'=>0x50000,
 		'plugin.may_be_shutdowned'=>1,
 		'plugin.may_be_launched'=>1,
-);
-
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
-foreach($lines as $line) {
-	$fields = explode(":",$line,2);
-if(count($fields)==2) {
-	$value = addcslashes(trim($fields[1]),"\\\'\"\n\r\t");
-	$field = trim($fields[0]); 
-switch($field) {
-	case "plugin.may_be_shutdowned":
-    case "plugin.may_be_launched":
-{
-		$info[$field] = intval($value);
-			break;
-}
-	case "plugin.version":
-	case "plugin.runlevel":
-{
-		$info[$field] = floatval($value);
-			break;
-}
-	case "rtorrent.version":
-	case "php.version":
-{
+		foreach($lines as $line)
+		{
+			$fields = explode(":",$line,2);
+			if(count($fields)==2)
+			{
+				$value = addcslashes(trim($fields[1]),"\\\'\"\n\r\t");
+				$field = trim($fields[0]); 
+				switch($field)
+				{
+					case "plugin.may_be_shutdowned":
+                                        case "plugin.may_be_launched":
+                                        {
+                                        	$info[$field] = intval($value);
+						break;
+                                        }
+					case "plugin.version":
+					case "plugin.runlevel":
+					{
+						$info[$field] = floatval($value);
+						break;
+					}
+					case "rtorrent.version":
+					case "php.version":
+					{
 						$version = explode('.', $value);
 						$info[$field] = (intval($version[0])<<16) + (intval($version[1])<<8) + intval($version[2]);
 						$info[$field.'.readable'] = $value;
@@ -148,11 +156,8 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 			if(!array_key_exists($file,$userPermissions))
 				$userPermissions[$file] = true;
 			$info = getPluginInfo( $file, $permissions );
-			if($info &&
-				$info["plugin.may_be_launched"] && 
-				(getFlag($permissions,$file,"enabled")=="user-defined") &&
-				!$userPermissions[$file])
-				$info = false;
+if($info && $info["plugin.may_be_launched"] && (getFlag($permissions,$file,"enabled")=="user-defined") && !$userPermissions[$file])
+	$info = false;
 if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.version']<=$theSettings->iVersion)) {
 				if(count($info['rtorrent.external.error']))
 					eval( getPluginConf( $file ) );

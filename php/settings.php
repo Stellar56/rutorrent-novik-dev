@@ -1,7 +1,7 @@
 <?php
 
-require_once( 'xmlrpc.php' );
-require_once( 'cache.php');
+require_once('xmlrpc.php');
+require_once('cache.php');
 
 class rTorrentSettings
 {
@@ -410,11 +410,7 @@ class rTorrentSettings
 				else
 				if(strpos($cmd->command, 'f.') === 0)
 					$prefix = ':f';
-				if(!empty($prefix) && 
-					(count($cmd->params)>1) && 
-					(substr($cmd->command, -10) !== '.multicall') &&
-					(strpos($cmd->params[0]->value, ':') === false) )
-				{
+if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !== '.multicall') && (strpos($cmd->params[0]->value, ':') === false) ) {
 					$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
 					array_splice( $cmd->params, 1, 1 );
 				}
@@ -422,3 +418,5 @@ class rTorrentSettings
 		}
 	}
 }
+
+?>

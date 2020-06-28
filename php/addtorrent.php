@@ -11,22 +11,22 @@ else {
 	$js = '';
 	foreach( $_REQUEST['result'] as $ndx=>$result )
 	$js.= ('noty("'.(isset($_REQUEST['name'][$ndx]) ? addslashes(rawurldecode(htmlspecialchars($_REQUEST['name'][$ndx]))).' - ' : '').
-		'"+theUILang.addTorrent'.$_REQUEST['result'][$ndx].
-		',"'.($_REQUEST['result'][$ndx]=='Success' ? 'success' : 'error').'");');
+				'"+theUILang.addTorrent'.$_REQUEST['result'][$ndx].
+				',"'.($_REQUEST['result'][$ndx]=='Success' ? 'success' : 'error').'");');
 		cachedEcho($js,"text/html");
 }
 } else {
 	$uploaded_files = array();
 	$label = null;
-if(isset($_REQUEST['label']))	
-	$label = trim($_REQUEST['label']);
+	if(isset($_REQUEST['label']))	
+		$label = trim($_REQUEST['label']);
 	$dir_edit = null;
 if(isset($_REQUEST['dir_edit'])) {
 	$dir_edit = trim($_REQUEST['dir_edit']);
 if((strlen($dir_edit)>0) && !rTorrentSettings::get()->correctDirectory($dir_edit))
 	$uploaded_files = array( array( 'status' => "FailedDirectory" ) );
 }
-	
+
 if(empty($uploaded_files)) {
 if(isset($_FILES['torrent_file'])) {
 if( is_array($_FILES['torrent_file']['name']) ) {
@@ -38,7 +38,7 @@ for ($i = 0; $i<count($_FILES['torrent_file']['name']); ++$i) {
 }
 } else
 	$files[] = $_FILES['torrent_file'];
-foreach( $files as $file ) {
+foreach($files as $file) {
 	$ufile = $file['name'];
 if(pathinfo($ufile,PATHINFO_EXTENSION)!="torrent")
 	$ufile.=".torrent";
@@ -62,7 +62,7 @@ if(@$cli->fetchComplex($url) && $cli->status>=200 && $cli->status<300) {
 if($name===false)
 	$name = md5($url).".torrent";
 	$name = getUniqueUploadedFilename($name);
-	$f = @fopen($name,"w");
+$f = @fopen($name,"w");
 if($f!==false) {
 		@fwrite($f,$cli->results,strlen($cli->results));
 		fclose($f);

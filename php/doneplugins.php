@@ -1,9 +1,9 @@
 <?php
 require_once("xmlrpc.php");
 require_once('settings.php');
-
 define('FLAG_CANT_SHUTDOWN',	0x0080);
 define('FLAG_CAN_CHANGE_LAUNCH',0x0100);
+
 
 	$theSettings = rTorrentSettings::get();
 	$jResult = "";
@@ -16,11 +16,14 @@ define('FLAG_CAN_CHANGE_LAUNCH',0x0100);
 
 if(!isset($HTTP_RAW_POST_DATA))
 	$HTTP_RAW_POST_DATA = file_get_contents("php://input");
-if(isset($HTTP_RAW_POST_DATA)) {
+if(isset($HTTP_RAW_POST_DATA))
+{
 	$vars = explode('&', $HTTP_RAW_POST_DATA);
-foreach($vars as $var) {
-	$parts = explode("=",$var);
-if($parts[0]=="plg") {
+	foreach($vars as $var)
+	{
+		$parts = explode("=",$var);
+		if($parts[0]=="plg")
+		{
 			$perms = $theSettings->getPluginData($parts[1]);
 			switch($cmd)
 			{

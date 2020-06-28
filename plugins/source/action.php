@@ -1,19 +1,24 @@
 <?php
-require_once('../../php/rtorrent.php');
+require_once( '../../php/rtorrent.php' );
 
 if(isset($_REQUEST['result']))
 	cachedEcho('noty(theUILang.cantFindTorrent,"error");',"text/html");
-if(isset($_POST['hash'])) {
+if(isset($_POST['hash']))
+{
 	$query = urldecode($_POST['hash']);
 	$hashes = explode(" ", $query);
-if(count($hashes) == 1) {
+	if(count($hashes) == 1)
+	{
 		$torrent = rTorrent::getSource($_POST['hash']);
 		if($torrent)
 			$torrent->send();
-} else {
-if(!class_exists('ZipArchive'))
+	}
+	else
+	{
+		if(!class_exists('ZipArchive'))
 			cachedEcho('noty("PHP module \'zip\' is not installed.","error");',"text/html");
-foreach($hashes as $hash) {
+		foreach($hashes as $hash)
+		{
 			$req = new rXMLRPCRequest( array(
 				new rXMLRPCCommand("get_session"),
 				new rXMLRPCCommand("d.get_tied_to_file",$hash)) );
@@ -60,7 +65,5 @@ foreach($hashes as $hash) {
 		}
 	}
 }
-		header("HTTP/1.0 302 Moved Temporarily");
-		header("Location: action.php?result=0");
-
-?>
+header("HTTP/1.0 302 Moved Temporarily");
+header("Location: action.php?result=0");

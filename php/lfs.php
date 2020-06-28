@@ -63,3 +63,5 @@ class LFS
 		return(($ss==false) ? false : floatval($ss["mtime"]));
 	}
 }
+
+?>
