@@ -1,18 +1,18 @@
 <?php
 require_once("xmlrpc.php");
 require_once('settings.php');
+
 define('FLAG_CANT_SHUTDOWN',	0x0080);
 define('FLAG_CAN_CHANGE_LAUNCH',0x0100);
 
+$theSettings = rTorrentSettings::get();
+$jResult = "";
 
-	$theSettings = rTorrentSettings::get();
-	$jResult = "";
+$cmd = isset($_REQUEST["cmd"]) ? $_REQUEST["cmd"] : "done";
 
-	$cmd = isset($_REQUEST["cmd"]) ? $_REQUEST["cmd"] : "done";
-
-	$userPermissions = array( "__hash__"=>"plugins.dat" );
-	$cache = new rCache();
-	$cache->get($userPermissions);
+$userPermissions = array( "__hash__"=>"plugins.dat" );
+$cache = new rCache();
+$cache->get($userPermissions);
 
 if(!isset($HTTP_RAW_POST_DATA))
 	$HTTP_RAW_POST_DATA = file_get_contents("php://input");

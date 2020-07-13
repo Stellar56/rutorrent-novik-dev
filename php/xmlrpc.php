@@ -1,21 +1,20 @@
 <?php
 
-require_once( 'util.php' );
-require_once( 'settings.php' );
+require_once('util.php');
+require_once('settings.php');
 
 class rXMLRPCParam
 {
 	public $type;
 	public $value;
 
-	public function __construct( $aType, $aValue )
-	{
+public function __construct($aType, $aValue) {
 		$this->type = $aType;
 		if(($this->type=="i8") || ($this->type=="i4"))
 			$this->value = number_format($aValue,0,'.','');
-		else
+else
 			$this->value = htmlspecialchars($aValue,ENT_NOQUOTES,"UTF-8");
-	}
+}
 }
 
 class rXMLRPCCommand 
@@ -237,3 +236,5 @@ function getCmd($cmd)
 {
 	return(rTorrentSettings::get()->getCommand($cmd));
 }
+
+?>

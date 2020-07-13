@@ -19,5 +19,3 @@ if( $retrieveHost || $retrieveCountry || $retrieveComments )
 } 
 else
 	$jResult .= "plugin.disable();";
-
-?>

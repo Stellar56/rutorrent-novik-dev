@@ -11,5 +11,3 @@ if($useWebsite!==false)
 }
 else
 	$jResult.="plugin.disable();";
-
-?>

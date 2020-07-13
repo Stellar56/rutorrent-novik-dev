@@ -16,8 +16,7 @@ execute = {sh,-c,/usr/local/bin/php /usr/local/www/rt/php/initplugins.php user_n
 if( !chdir( dirname( __FILE__ ) ) )
         exit();
 
-function pluginsSort($a, $b)
-{ 
+function pluginsSort($a, $b) { 
 	$lvl1 = (float) $a["level"];
 	$lvl2 = (float) $b["level"];
 	if($lvl1>$lvl2)
@@ -33,7 +32,7 @@ function getFlag($permissions,$pname,$fname)
 	if(array_key_exists($pname,$permissions) &&
 		array_key_exists($fname,$permissions[$pname]))
 		$ret = $permissions[$pname][$fname];
-	else
+else
 	if(array_key_exists("default",$permissions) &&
 		array_key_exists($fname,$permissions["default"]))
 		$ret = $permissions["default"][$fname];
@@ -156,9 +155,15 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 			if(!array_key_exists($file,$userPermissions))
 				$userPermissions[$file] = true;
 			$info = getPluginInfo( $file, $permissions );
-if($info && $info["plugin.may_be_launched"] && (getFlag($permissions,$file,"enabled")=="user-defined") && !$userPermissions[$file])
-	$info = false;
-if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.version']<=$theSettings->iVersion)) {
+			if($info &&
+				$info["plugin.may_be_launched"] && 
+				(getFlag($permissions,$file,"enabled")=="user-defined") &&
+				!$userPermissions[$file])
+				$info = false;
+			if(($info!==false) &&
+				($info['php.version']<=$phpIVersion) &&
+				($info['rtorrent.version']<=$theSettings->iVersion))
+			{
 				if(count($info['rtorrent.external.error']))
 					eval( getPluginConf( $file ) );
 				$extError = false;
@@ -207,23 +212,26 @@ if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.v
 				$php = "../plugins/".$file."/init.php";
 				if(!is_readable($php))
 					$php = NULL;
-				$init[] = array( "php" => $php, "name" => $file, "level" => $info["plugin.runlevel"], "deps"=>$info["plugin.dependencies"] );
-				$names[] = $file;
-			} 
-		}
-	}
+	$init[] = array(
+		"php" => $php,
+		"name" => $file,
+		"level" => $info["plugin.runlevel"],
+		"deps"=>$info["plugin.dependencies"]
+);
+	$names[] = $file;
+} 
+}
+}
 	closedir($handle);
 	usort($init,"pluginsSort");
 	$do_diagnostic = false;
 	$jResult = '';
 	$jEnd = '';
 	$pInfo = array( "perms" => 0x0100 );
-	foreach($init as $plugin)
-	{
-		if($plugin["php"] && !count(array_diff( $plugin["deps"], $names )))
-			require_once( $plugin["php"] );
-
-	}
+foreach($init as $plugin) {
+		if($plugin["php"] && !count(array_diff($plugin["deps"], $names)))
+require_once($plugin["php"]);
+}
 	$theSettings->store();
 }
 

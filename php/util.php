@@ -105,7 +105,8 @@ function isInvalidUTF8($str)
 function win2utf($str) 
 {
 	$outstr='';
-	$recode=array(
+	$recode=array
+	(
 		0x0402,0x0403,0x201A,0x0453,0x201E,0x2026,0x2020,0x2021,
 		0x20AC,0x2030,0x0409,0x2039,0x040A,0x040C,0x040B,0x040F,
 		0x0452,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,
@@ -122,9 +123,10 @@ function win2utf($str)
 		0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
 		0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
 		0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F
-);
+	);
 	$and=0x3F;
-for($i=0;$i<strlen($str);$i++) {
+	for($i=0;$i<strlen($str);$i++) 
+	{
 		$octet=array();
 		if(ord($str[$i])<0x80) 
 			$strhex=ord($str[$i]);
@@ -735,7 +737,8 @@ function getTempDirectory()
 @define('XMLRPC_MIN_I8', -9.999999999999999E+15);
 @define('XMLRPC_MAX_I8', 9.999999999999999E+15);
 
-function iclamp( $val, $min = 0, $max = XMLRPC_MAX_I8 ) {
+function iclamp( $val, $min = 0, $max = XMLRPC_MAX_I8 )
+{
 	$val = floatval($val);	
 	if( $val < $min )
 		$val = $min;

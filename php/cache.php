@@ -26,40 +26,54 @@ class rCache
 	{
 		global $profileMask;
 		$name = $this->getName($rss);
-if( is_object($rss) && isset($rss->modified) && method_exists($rss,"merge") && ($rss->modified < filemtime($name))) {
-	$className = get_class($rss);
-	$newInstance = new $className();
-if($this->get($newInstance) && !$rss->merge($newInstance, $arg))
-		return(false);
-}
-	$fp = fopen( $name.'.tmp', "a" );
-if($fp!==false) {
-if(self::flock($fp)) {
-		ftruncate( $fp, 0 );
-	$str = serialize( $rss );
-if((fwrite( $fp, $str ) == strlen($str)) && fflush($fp)) {
-		flock( $fp, LOCK_UN );
-if(fclose( $fp ) !== false) {
-	    @rename( $name.'.tmp', $name );
-		@chmod($name,$profileMask & 0666);
-	    return(true);
-} else
-		unlink( $name.'.tmp' );
-} else {
+		if(     is_object($rss) &&
+			isset($rss->modified) &&
+			method_exists($rss,"merge") &&
+			($rss->modified < filemtime($name)))
+		{
+		        $className = get_class($rss);
+			$newInstance = new $className();
+			if($this->get($newInstance) &&
+				!$rss->merge($newInstance, $arg))
+				return(false);
+		}
+		$fp = fopen( $name.'.tmp', "a" );
+		if($fp!==false)
+		{
+			if(self::flock( $fp ))
+			{
+				ftruncate( $fp, 0 );
+				$str = serialize( $rss );
+	        		if((fwrite( $fp, $str ) == strlen($str)) && fflush( $fp ))
+	        		{
+					flock( $fp, LOCK_UN );
+        				if(fclose( $fp ) !== false)
+        				{
+	       					@rename( $name.'.tmp', $name );
+						@chmod($name,$profileMask & 0666);
+	        				return(true);
+					}
+					else
+						unlink( $name.'.tmp' );
+				}
+				else
+				{
 					flock( $fp, LOCK_UN );
         				fclose( $fp );
         				unlink( $name.'.tmp' );
-}	        			
-} else
-		fclose( $fp );
-}
+				}	        			
+	        	}
+	        	else
+		        	fclose( $fp );
+		}
 	        return(false);
-}
-	
-public function get( &$rss ) {
+	}
+	public function get( &$rss )
+	{
 	        $fname = $this->getName($rss);
 		$ret = @file_get_contents($fname);
-if($ret!==false) {
+		if($ret!==false)
+		{
 			$tmp = unserialize($ret);
 			if(is_array($tmp))
 			{
@@ -98,5 +112,3 @@ if($ret!==false) {
 			
 	}
 }
-
-?>
