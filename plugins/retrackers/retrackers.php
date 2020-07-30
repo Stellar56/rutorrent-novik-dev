@@ -1,5 +1,5 @@
 <?php
-require_once( dirname(__FILE__)."/../../php/cache.php" );
+require_once(dirname(__FILE__)."/../../php/cache.php");
 
 class rRetrackers
 {
@@ -71,3 +71,5 @@ class rRetrackers
 		return("theWebUI.retrackers = ".safe_json_encode($this).";\n");
 	}
 }
+
+?>
