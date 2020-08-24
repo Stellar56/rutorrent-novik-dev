@@ -599,5 +599,3 @@ class Torrent
         	return(isset( $this->info ) ? strtoupper(sha1( self::encode( $this->info ) )) : null);
 	}
 }
-
-?>

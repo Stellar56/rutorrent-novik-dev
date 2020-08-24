@@ -55,55 +55,71 @@ if(count($argv)>1)
 		new rXMLRPCCommand("d.is_private",$hash),
 		new rXMLRPCCommand("d.get_name",$hash),
 		) );
-	
-if($req->success()) {
+	if($req->success())
+	{
 		$isStart = ($req->val[1]!=0);
-if((count($trks->list) || count($trks->todelete)) && !($req->val[5] && $trks->dontAddPrivate) && ($req->val[6]!=$hash.".meta")) {
+		if((count($trks->list) || count($trks->todelete)) && !($req->val[5] && $trks->dontAddPrivate) &&
+			($req->val[6]!=$hash.".meta"))
+		{
 			$fname = $req->val[0].$hash.".torrent";
-if(empty($req->val[0]) || !is_readable($fname)) {
-if(strlen($req->val[2]) && is_readable($req->val[2]))
+			if(empty($req->val[0]) || !is_readable($fname))
+			{
+				if(strlen($req->val[2]) && is_readable($req->val[2]))
 					$fname = $req->val[2];
-else
+				else
 					$fname = null;
-}
-
-if($fname) {
+			}
+			if($fname)
+			{
 				$torrent = new Torrent( $fname );		
-if( !$torrent->errors() ) {
+				if( !$torrent->errors() )
+				{
 				        $wasAddition = true;
 					$lst = $torrent->announce_list();
-if(!$lst) {
-if(count($trks->list)) {
-if($torrent->announce())
-	$torrent->announce_list($trks->addToBegin ? array_merge($trks->list, array(array($torrent->announce()))) : 
-		array_merge(array(array($torrent->announce())),$trks->list));
-else {
-	$torrent->announce($trks->list[0][0]);
-	$torrent->announce_list($trks->list);
-}
-} else {
-	$wasAddition = false;
-}
-} else {
-	$addition = $trks->list;
-		foreach( $lst as $group )
-		foreach( $group as $tracker )
-	$addition = clearTracker($addition,$tracker);
-if(count($addition)) {
-	$torrent->announce_list($trks->addToBegin ? array_merge($addition,$lst) : array_merge($lst,$addition));
-} else {
-	$wasAddition = false;
-}
-}
+					if(!$lst)
+					{
+						if(count($trks->list))
+						{
+							if($torrent->announce())
+								$torrent->announce_list($trks->addToBegin ? array_merge($trks->list, array(array($torrent->announce()))) : 
+									array_merge(array(array($torrent->announce())),$trks->list));
+							else
+							{
+								$torrent->announce($trks->list[0][0]);
+								$torrent->announce_list($trks->list);
+							}
+						} 
+						else
+						{
+							$wasAddition = false;
+						}
+					}
+					else
+					{
+						$addition = $trks->list;
+						foreach( $lst as $group )
+							foreach( $group as $tracker )
+								$addition = clearTracker($addition,$tracker);
+						if(count($addition))
+						{
+							$torrent->announce_list($trks->addToBegin ? array_merge($addition,$lst) : array_merge($lst,$addition));
+						}
+						else
+						{
+							$wasAddition = false;
+						}
+					}
 
-	$wasDeletion = false;
-	$lst = $torrent->announce_list();
-if($lst && count($trks->todelete) && deleteTrackers($lst,$trks->todelete)) {
+				        $wasDeletion = false;
+					$lst = $torrent->announce_list();
+					if($lst && count($trks->todelete) && deleteTrackers($lst,$trks->todelete))
+					{
 						$wasDeletion = true;
 						$torrent->announce_list($lst);
-}
+					}
 
-if($wasAddition || $wasDeletion) {
+					if($wasAddition || $wasDeletion)
+					{
 						if(isset($torrent->{'rtorrent'}))
 							unset($torrent->{'rtorrent'});
 						$eReq = new rXMLRPCRequest( new rXMLRPCCommand("d.erase", $hash ) );
@@ -125,5 +141,3 @@ if($wasAddition || $wasDeletion) {
 		}
 	}
 }
-
-?>

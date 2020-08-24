@@ -1,5 +1,5 @@
 <?php
-require_once('../../php/rtorrent.php');
+require_once( '../../php/rtorrent.php' );
 
 if(isset($_REQUEST['result']))
 	cachedEcho('noty(theUILang.cantFindTorrent,"error");',"text/html");
@@ -65,7 +65,5 @@ if(isset($_POST['hash']))
 		}
 	}
 }
-		header("HTTP/1.0 302 Moved Temporarily");
-		header("Location: action.php?result=0");
-
-?>
+header("HTTP/1.0 302 Moved Temporarily");
+header("Location: action.php?result=0");

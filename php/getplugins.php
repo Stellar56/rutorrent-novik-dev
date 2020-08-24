@@ -3,7 +3,8 @@
 require_once( "util.php" );
 require_once( "settings.php" );
 
-function pluginsSort($a, $b) { 
+function pluginsSort($a, $b)
+{ 
 	$lvl1 = (float) $a["info"]["plugin.runlevel"];
 	$lvl2 = (float) $b["info"]["plugin.runlevel"];
 	if($lvl1>$lvl2)
@@ -50,17 +51,20 @@ function getPluginInfo( $name, $permissions )
 		'web.external.warning'=>array(),
 		'web.external.error'=>array(),
 		'plugin.help'=>'',
-);
-
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
-foreach($lines as $line) {
+		foreach($lines as $line)
+		{
 			$fields = explode(":",$line,2);
-if(count($fields)==2) {
+			if(count($fields)==2)
+			{
 				$value = addcslashes(trim($fields[1]),"\\\'\"\n\r\t");
 				$field = trim($fields[0]); 
-switch($field) {
+				switch($field)
+				{
 					case "plugin.help":
 					case "plugin.author":
 					case "plugin.description":
@@ -134,41 +138,44 @@ switch($field) {
 		{
 			if(!getFlag($permissions,$name,"enabled"))
 				return(false);
-	$flags = array(
-		"canChangeToolbar" 	=> 0x0001,
-		"canChangeMenu" 	=> 0x0002,
-		"canChangeOptions"	=> 0x0004,
-		"canChangeTabs"		=> 0x0008,
-		"canChangeColumns"	=> 0x0010,
-		"canChangeStatusBar"	=> 0x0020,
-		"canChangeCategory"	=> 0x0040,
-		"canBeShutdowned"	=> 0x0080,
+			$flags = array(
+				"canChangeToolbar" 	=> 0x0001,
+				"canChangeMenu" 	=> 0x0002,
+				"canChangeOptions"	=> 0x0004,
+				"canChangeTabs"		=> 0x0008,
+				"canChangeColumns"	=> 0x0010,
+				"canChangeStatusBar"	=> 0x0020,
+				"canChangeCategory"	=> 0x0040,
+				"canBeShutdowned"	=> 0x0080,
 			/*	"canBeLaunched"		=> 0x0100, */
-);
+				);
 			foreach($flags as $flagName=>$flagVal)
-if(!getFlag($permissions,$name,$flagName))
-	$perms|=$flagVal;
+				if(!getFlag($permissions,$name,$flagName))
+					$perms|=$flagVal;
 
-if(!$info["plugin.may_be_shutdowned"])
-	$perms|=$flags["canBeShutdowned"];
-}
-	$info["perms"] = $perms;
-}
-		return(array_key_exists("plugin.version",$info) ? $info : false);
+			if(!$info["plugin.may_be_shutdowned"])
+				$perms|=$flags["canBeShutdowned"];
+
+		}
+		$info["perms"] = $perms;
+	}
+	return(array_key_exists("plugin.version",$info) ? $info : false);
 }
 
-function findRemoteEXE($exe, $err, &$remoteRequests) {
+function findRemoteEXE( $exe, $err, &$remoteRequests )
+{
 	$st = getSettingsPath().'/'.rand();
-if(!array_key_exists($exe,$remoteRequests)) {
+	if(!array_key_exists($exe,$remoteRequests))
+	{
 		$path=realpath(dirname('.'));
 		global $pathToExternals;
 		$cmd = array( "sh", addslash($path)."test.sh", $exe, $st );
-if(isset($pathToExternals[$exe]) && !empty($pathToExternals[$exe]))
-	$cmd[] = $pathToExternals[$exe];
-	$req = new rXMLRPCRequest(new rXMLRPCCommand("execute", $cmd));
-	$req->run();
-	$remoteRequests[$exe] = array( "path"=>$st, "err"=>array() );
-}
+		if(isset($pathToExternals[$exe]) && !empty($pathToExternals[$exe]))
+			$cmd[] = $pathToExternals[$exe];
+		$req = new rXMLRPCRequest(new rXMLRPCCommand("execute", $cmd));
+		$req->run();
+		$remoteRequests[$exe] = array( "path"=>$st, "err"=>array() );
+	}
 	$remoteRequests[$exe]["err"][] = $err;
 }
 
@@ -182,10 +189,11 @@ function testRemoteRequests($remoteRequests)
 		{
 			foreach($info["err"] as $err)
 				$ret.=$err;
-} else
-		@unlink($file);
-}
-		return($ret);
+		}
+		else
+			@unlink($file);
+	}
+	return($ret);
 }
 
 $jResult = "theWebUI.deltaTime = 0;\n";
@@ -193,21 +201,20 @@ $access = getConfFile('access.ini');
 if(!$access)
 	$access = "../conf/access.ini";
 $permissions = parse_ini_file($access);
-	$settingsFlags = array(
-		"showDownloadsPage" 	=> 0x0001,
-		"showConnectionPage" 	=> 0x0002,
-		"showBittorentPage"	=> 0x0004,
-		"showAdvancedPage"	=> 0x0008,
-		"showPluginsTab"	=> 0x0010,
-		"canChangeULRate"	=> 0x0020,
-		"canChangeDLRate"	=> 0x0040,
-		"canChangeTorrentProperties"	=> 0x0080,
-		"canAddTorrentsWithoutPath"	=> 0x0100,
-		"canAddTorrentsWithoutStarting"	=> 0x0200,
-		"canAddTorrentsWithResume"	=> 0x0400,	
-		"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
+$settingsFlags = array(
+	"showDownloadsPage" 	=> 0x0001,
+	"showConnectionPage" 	=> 0x0002,
+	"showBittorentPage"	=> 0x0004,
+	"showAdvancedPage"	=> 0x0008,
+	"showPluginsTab"	=> 0x0010,
+	"canChangeULRate"	=> 0x0020,
+	"canChangeDLRate"	=> 0x0040,
+	"canChangeTorrentProperties"	=> 0x0080,
+	"canAddTorrentsWithoutPath"	=> 0x0100,
+	"canAddTorrentsWithoutStarting"	=> 0x0200,
+	"canAddTorrentsWithResume"	=> 0x0400,	
+	"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
 );
-
 $perms = 0;
 foreach($settingsFlags as $flagName=>$flagVal)
 	if(!array_key_exists($flagName,$permissions) || $permissions[$flagName])
@@ -216,7 +223,8 @@ $jResult .= "theWebUI.showFlags = ".$perms.";\n";
 $jResult .= "theURLs.XMLRPCMountPoint = '".$XMLRPCMountPoint."';\n";
 $jResult.="theWebUI.systemInfo = {};\ntheWebUI.systemInfo.php = { canHandleBigFiles : ".((PHP_INT_SIZE<=4) ? "false" : "true")." };\n";
 
-if($handle = opendir('../plugins')) {
+if($handle = opendir('../plugins')) 
+{
 	ignore_user_abort(true);
 	set_time_limit(0);
 	$tmp = getTempDirectory();
@@ -226,18 +234,23 @@ if($handle = opendir('../plugins')) {
 	if(!@file_exists($tempDirectory.'/.') || !is_readable($tempDirectory) || !is_writable($tempDirectory))
 		$jResult.="noty(theUILang.badTempPath+' (".$tempDirectory.")','error');";	
 
-if(!function_exists('preg_match_all')) {
+	if(!function_exists('preg_match_all'))
+	{
 		$jResult.="noty(theUILang.PCRENotFound,'error');";
 		$jResult.="theWebUI.systemInfo.rTorrent = { started: false, iVersion : 0, version : '?', libVersion : '?' };\n";
-} else {
+	}
+	else
+	{
 		$remoteRequests = array();
 		$theSettings = rTorrentSettings::get(true);
 		if(!$theSettings->linkExist)
 		{
 			$jResult.="noty(theUILang.badLinkTorTorrent,'error');";
 			$jResult.="theWebUI.systemInfo.rTorrent = { started: false, iVersion : 0, version : '?', libVersion : '?', apiVersion : 0 };\n";
-} else {
-if($theSettings->idNotFound)
+		}
+		else
+		{
+		        if($theSettings->idNotFound)
 				$jResult.="noty(theUILang.idNotFound,'error');";
 			$jResult.="theWebUI.systemInfo.rTorrent = { started: true, iVersion : ".$theSettings->iVersion.", version : '".
 				$theSettings->version."', libVersion : '".$theSettings->libVersion."', apiVersion : ".$theSettings->apiVersion." };\n";
@@ -248,7 +261,8 @@ if($theSettings->idNotFound)
 				@chmod($up,$profileMask);
 				@chmod($st,$profileMask);
 				@chmod('./test.sh',$profileMask & 0755);
-if(PHP_USE_GZIP && (findEXE('gzip')===false)) {
+	        	        if(PHP_USE_GZIP && (findEXE('gzip')===false))
+	        	        {
 	        	        	@define('PHP_USE_GZIP', false);
 	        	        	$jResult.="noty(theUILang.gzipNotFound,'error');";
 	        	        }
@@ -512,5 +526,3 @@ if(PHP_USE_GZIP && (findEXE('gzip')===false)) {
 }
 
 cachedEcho($jResult,"application/javascript",true);
-
-?>

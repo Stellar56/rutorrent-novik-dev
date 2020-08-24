@@ -2,7 +2,7 @@
 
 if(empty($pathToExternals['python']))	// May be path already defined?
 {
-	$pathToExternals['/usr/bin/python2.7'] = '';// Something like /usr/bin/python. If empty, will be found in PATH.
+	$pathToExternals['python'] = '/usr/bin/python2.7';// Something like /usr/bin/python. If empty, will be found in PATH.
 }
 
 	$recaptcha_solving_enabled = false;
