@@ -1,5 +1,5 @@
 <?php
-require_once( dirname(__FILE__)."/cloudflare.php" );
+require_once(dirname(__FILE__)."/cloudflare.php");
 
 	$ok = true;
 if($do_diagnostic) {
