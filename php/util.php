@@ -35,78 +35,66 @@ function stripSlashesFromArray(&$arr)
         {
 		foreach($arr as $k=>$v)
 		{
-			if(is_array($v))
-			{
+if(is_array($v)) {
 				stripSlashesFromArray($v);
 				$arr[$k] = $v;
-			}
-			else
-			{
+} else {
 				$arr[$k] = stripslashes($v);
-			}
-		}
-	}
+}
+}
+}
 }
 
-function fix_magic_quotes_gpc() 
-{
-	if(version_compare(phpversion(), '5.4', '<'))
-	{
-		if(function_exists('ini_set'))
-		{
+function fix_magic_quotes_gpc() {
+if(version_compare(phpversion(), '5.4', '<')) {
+if(function_exists('ini_set')) {
 			ini_set('magic_quotes_runtime', 0);
 			ini_set('magic_quotes_sybase', 0);
-		}
-		if(get_magic_quotes_gpc())
-		{
+}
+
+if(get_magic_quotes_gpc()) {
 			stripSlashesFromArray($_POST);
 			stripSlashesFromArray($_GET);
 			stripSlashesFromArray($_COOKIE);
 			stripSlashesFromArray($_REQUEST);
-		}
-	}
+}
+}
 }
 
 fix_magic_quotes_gpc();
 setlocale(LC_CTYPE, $locale, "UTF-8", "en_US.UTF-8", "en_US.UTF8");
 setlocale(LC_COLLATE, $locale, "UTF-8", "en_US.UTF-8", "en_US.UTF8");
 
-function quoteAndDeslashEachItem($item)
-{
-	return('"'.addcslashes($item,"\\\'\"\n\r\t").'"'); 
+function quoteAndDeslashEachItem($item) {
+		return('"'.addcslashes($item,"\\\'\"\n\r\t").'"'); 
 }
 
-function isInvalidUTF8($str) 
-{
+function isInvalidUTF8($str) {
 	$len = strlen($str);
-	for($i = 0; $i < $len; $i++)
-	{
+for($i = 0; $i < $len; $i++) {
 		$c = ord($str[$i]);
-		if($c > 128) 
-		{
-			if(($c > 247)) return(true);
-			elseif($c > 239) $bytes = 4;
-			elseif($c > 223) $bytes = 3;
-			elseif($c > 191) $bytes = 2;
-			else return(true);
-			if(($i + $bytes) > $len) return(true);
-			while ($bytes > 1) 
-			{
-				$i++;
-				$b = ord($str[$i]);
-				if($b < 128 || $b > 191) return(true);
-				$bytes--;
-			}
-		}
-	}
-	return(false);
+if($c > 128) {
+if(($c > 247)) return(true);
+elseif($c > 239) $bytes = 4;
+elseif($c > 223) $bytes = 3;
+elseif($c > 191) $bytes = 2;
+else
+		return(true);
+if(($i + $bytes) > $len) return(true);
+while ($bytes > 1) {
+	$i++;
+	$b = ord($str[$i]);
+if($b < 128 || $b > 191) return(true);
+	$bytes--;
+}
+}
+}
+		return(false);
 }
 
-function win2utf($str) 
-{
+function win2utf($str) {
 	$outstr='';
-	$recode=array
-	(
+	$recode=array(
 		0x0402,0x0403,0x201A,0x0453,0x201E,0x2026,0x2020,0x2021,
 		0x20AC,0x2030,0x0409,0x2039,0x040A,0x040C,0x040B,0x040F,
 		0x0452,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,
@@ -123,30 +111,30 @@ function win2utf($str)
 		0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
 		0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
 		0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F
-	);
+);
+
 	$and=0x3F;
-	for($i=0;$i<strlen($str);$i++) 
-	{
+for($i=0;$i<strlen($str);$i++) {
 		$octet=array();
 		if(ord($str[$i])<0x80) 
 			$strhex=ord($str[$i]);
-		else
+else
 			$strhex=$recode[ord($str[$i])-128];
 		if($strhex<0x0080)
 			$octet[0]=0x0;
-		elseif($strhex<0x0800)
-		{
+elseif($strhex<0x0800)
+{
 			$octet[0]=0xC0;
 			$octet[1]=0x80;
-		} 
-		elseif($strhex<0x10000) 
-		{
+} 
+elseif($strhex<0x10000) 
+{
 			$octet[0]=0xE0;
 			$octet[1]=0x80;
 			$octet[2]=0x80;
-		} 
-		elseif($strhex<0x200000) 
-		{
+} 
+elseif($strhex<0x200000) 
+{
 			$octet[0]=0xF0;
 			$octet[1]=0x80;
 			$octet[2]=0x80;
@@ -159,21 +147,18 @@ function win2utf($str)
 			$octet[2]=0x80;
 			$octet[3]=0x80;
 			$octet[4]=0x80;
-		} 
-		else 
-		{
+} else {
 			$octet[0]=0xFC;
 			$octet[1]=0x80;
 			$octet[2]=0x80;
 			$octet[3]=0x80;
 			$octet[4]=0x80;
 			$octet[5]=0x80;
-	    	}
-	    	for($j=(count($octet)-1);$j>=1;$j--) 
-		{
+}
+for($j=(count($octet)-1);$j>=1;$j--) {
 			$octet[$j]=$octet[$j] + ($strhex & $and);
 			$strhex=$strhex>>6;
-		}
+}
 		$octet[0]=$octet[0] + $strhex;
 		for($j=0;$j<count($octet);$j++) 
 			$outstr.=chr($octet[$j]);
@@ -195,15 +180,12 @@ function mix2utf($str, $inv = '_')
 			elseif($c > 223) $bytes = 3;
 			elseif($c > 191) $bytes = 2;
 			else $str[$i] = $inv;
-			if($bytes)
-			{
-				if(($i + $bytes) > $len) $str[$i] = $inv;
-				else
-				{
+if($bytes) {
+if(($i + $bytes) > $len) $str[$i] = $inv;
+else {
 					$start = $i;
 					$cnt = $bytes;
-					while($bytes > 1) 
-					{
+while($bytes > 1) {
 						$i++;
 						$b = ord($str[$i]);
 						if($b < 128 || $b > 191) 
@@ -505,20 +487,19 @@ function cachedEcho( $content, $type = null, $cacheable = false, $exit = true )
 		header('Expires: ');
 		header('Pragma: ');
 		header('Cache-Control: ');
-		if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)
-		{
-			header('HTTP/1.0 304 Not Modified');
-			return;
-		}
+if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
+		header('HTTP/1.0 304 Not Modified');
+		return;
+}
 		header('Etag: '.$etag);
-	}
-	if(!is_null($type))
+}
+
+if(!is_null($type))
 		header("Content-Type: ".$type."; charset=UTF-8");
 	$len = strlen($content);
 	if(ini_get("zlib.output_compression") && ($len<2048))
 		ini_set("zlib.output_compression",false);
-	if(!ini_get("zlib.output_compression"))
-	{
+if(!ini_get("zlib.output_compression")) {
 	        if(PHP_USE_GZIP && isset($_SERVER['HTTP_ACCEPT_ENCODING']))
 	        {
 		        if( strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false ) 
@@ -537,11 +518,12 @@ function cachedEcho( $content, $type = null, $cacheable = false, $exit = true )
 			}
 		}
 		header("Content-Length: ".$len);
-	}
-	if($exit)
-		exit($content);
-	else
-		echo($content);
+}
+
+if($exit)
+exit($content);
+else
+	echo($content);
 }
 
 function makeDirectory( $dirs, $perms = null )
@@ -746,3 +728,5 @@ function iclamp( $val, $min = 0, $max = XMLRPC_MAX_I8 )
 		$val = $max;
 	return( ((PHP_INT_SIZE>4) || ( ($val>=PHP_INT_MIN) && ($val<=PHP_INT_MAX) )) ? intval($val) : $val );
 }
+
+?>

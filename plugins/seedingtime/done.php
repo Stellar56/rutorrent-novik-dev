@@ -6,3 +6,5 @@ $req = new rXMLRPCRequest( array(
 		rTorrentSettings::get()->getOnHashdoneCommand(array("seedingtimecheck".getUser(),getCmd('cat=')))
 		));
 $req->run();
+
+?>

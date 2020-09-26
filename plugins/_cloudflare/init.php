@@ -1,4 +1,5 @@
 <?php
+
 require_once(dirname(__FILE__)."/cloudflare.php");
 
 	$ok = true;
@@ -8,6 +9,7 @@ if( !rCloudflare::is_module_present() ) {
 	$ok = false;
 }
 }
+
 if($ok) {
 	$theSettings->registerPlugin($plugin["name"],$pInfo["perms"]);
 	$theSettings->registerEventHook($plugin["name"],"URLFetched");

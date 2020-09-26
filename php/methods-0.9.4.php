@@ -290,3 +290,5 @@ $this->aliases = array_merge($this->aliases,array(
 "dht_statistics"	=>	array( "name"=>"dht.statistics", "prm"=>0 ),
 "load"			=>	array( "name"=>"load.normal", "prm"=>1 ),
 ));
+
+?>

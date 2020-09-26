@@ -1,24 +1,25 @@
 <?php
-require_once( 'Snoopy.class.inc');
-require_once( 'rtorrent.php' );
+
+require_once('Snoopy.class.inc');
+require_once('rtorrent.php');
 set_time_limit(0);
 
 if(isset($_REQUEST['result'])) {
-if(isset($_REQUEST['json']))	
+	if(isset($_REQUEST['json']))	
 		cachedEcho( '{ "result" : "'.$_REQUEST['result'][0].'" }',"application/json");
 else {
 	$js = '';
-		foreach( $_REQUEST['result'] as $ndx=>$result )
+	foreach( $_REQUEST['result'] as $ndx=>$result )
 	$js.= ('noty("'.(isset($_REQUEST['name'][$ndx]) ? addslashes(rawurldecode(htmlspecialchars($_REQUEST['name'][$ndx]))).' - ' : '').
-				'"+theUILang.addTorrent'.$_REQUEST['result'][$ndx].
-				',"'.($_REQUEST['result'][$ndx]=='Success' ? 'success' : 'error').'");');
+		'"+theUILang.addTorrent'.$_REQUEST['result'][$ndx].
+		',"'.($_REQUEST['result'][$ndx]=='Success' ? 'success' : 'error').'");');
 		cachedEcho($js,"text/html");
 }
 } else {
 	$uploaded_files = array();
 	$label = null;
-if(isset($_REQUEST['label']))	
-	$label = trim($_REQUEST['label']);
+	if(isset($_REQUEST['label']))	
+		$label = trim($_REQUEST['label']);
 	$dir_edit = null;
 if(isset($_REQUEST['dir_edit'])) {
 	$dir_edit = trim($_REQUEST['dir_edit']);
@@ -46,7 +47,6 @@ if(pathinfo($ufile,PATHINFO_EXTENSION)!="torrent")
 	$uploaded_files[] = array( 'name'=>$file['name'], 'file'=>$ufile, 'status'=>($ok ? "Success" : "Failed") );
 }
 } else {
-
 if(isset($_REQUEST['url'])) {
 	$url = trim($_REQUEST['url']);
 	$uploaded_url = array( 'name'=>$url, 'status'=>"Failed" );
@@ -63,7 +63,6 @@ if($name===false)
 	$name = md5($url).".torrent";
 	$name = getUniqueUploadedFilename($name);
 	$f = @fopen($name,"w");
-
 if($f!==false) {
 		@fwrite($f,$cli->results,strlen($cli->results));
 		fclose($f);
@@ -79,7 +78,7 @@ if($f!==false) {
 }
 	$location = "Location: //".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/addtorrent.php?";
 if(empty($uploaded_files))
-		$uploaded_files = array( array( 'status' => "Failed" ) );
+	$uploaded_files = array( array( 'status' => "Failed" ) );
 foreach($uploaded_files as &$file) {
 if( ($file['status']=='Success') && isset($file['file']) ) {
 	$file['file'] = realpath($file['file']);
@@ -105,10 +104,10 @@ if(rTorrent::sendTorrent($torrent,
 if( isset($file['name']) )
 	$location.=('name[]='.rawurlencode($file['name']).'&');
 }
-		header("HTTP/1.0 302 Moved Temporarily");
+			header("HTTP/1.0 302 Moved Temporarily");
 if(isset($_REQUEST['json']))
 	$location.='json=1';
-		header($location);
+			header($location);
 }
 
 ?>
