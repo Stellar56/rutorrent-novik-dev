@@ -86,5 +86,3 @@ else
 			cachedEcho('{ "port": '.$port.', "status": 0 }',"application/json");
 	}
 }
-
-?>

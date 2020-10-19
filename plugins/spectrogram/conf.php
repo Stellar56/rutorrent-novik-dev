@@ -2,10 +2,11 @@
 
 if(empty($pathToExternals['sox']))	// May be path already defined?
 {
-	$pathToExternals['sox'] = '/usr/bin/sox';	// Something like /usr/bin/sox. If empty, will be found in PATH.
+	$pathToExternals['sox'] = '';	// Something like /usr/bin/sox. If empty, will be found in PATH.
 }
 
-$extensions = array(
+$extensions = array
+(
 	"8svx", "aif", "aifc", "aiff", "aiffc", "al", "amb", "au", "avr", "caf", "cdda", "cdr", "cvs", "cvsd", 
 	"cvu", "dat", "dvms", "f32", "f4", "f64", "f8", "fap", "flac", "fssd", "gsm", "gsrt", "hcom", "htk", 
 	"ima", "ircam", "la", "lpc", "lpc10", "lu", "mat", "mat4", "mat5", "maud", "mp2", "mp3", "nist", "paf", "prc", "pvf",
@@ -14,6 +15,4 @@ $extensions = array(
 	"u4", "u8", "ub", "ul", "uw", "vms", "voc", "vox", "w64", "wav", "wavpcm", "wve", "xa", "xi"
 );
 
-	$arguments = "--multi-threaded --show-progress -n spectrogram";
-
-?>
+$arguments = "--multi-threaded --show-progress -n spectrogram";

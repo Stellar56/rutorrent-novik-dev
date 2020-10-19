@@ -1,8 +1,9 @@
 <?php
 
-require_once('util.php');
+require_once( 'util.php' );
 
-if(isset($_REQUEST['v'])) {
+if(isset($_REQUEST['v']))
+{
 	$name = getSettingsPath()."/uisettings.json";
 	$fp = fopen( $name.'.tmp', "a" );
 	if($fp!==false)

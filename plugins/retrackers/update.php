@@ -136,10 +136,8 @@ if(count($argv)>1)
 		}
 		if(!$processed && $isStart)
 		{
-			$req = new rXMLRPCRequest( new rXMLRPCCommand("d.start", $hash) );
+			$req = new rXMLRPCRequest( new rXMLRPCCommand("d.start", $hash ) );
 			$req->run();
 		}
 	}
 }
-
-?>

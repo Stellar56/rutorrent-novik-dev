@@ -86,19 +86,24 @@ if(isset($_REQUEST['cmd']))
 					if(isset($_REQUEST['trackers']))
 					{
 						$arr = explode("\r",$_REQUEST['trackers']);
-foreach( $arr as $key => $value ) {
-	$value = trim($value);
-if(strlen($value)) {
-	$trackers[] = $value;
-	$rt->list[] = $value;
-} else {
-if(count($trackers)>0) {
+						foreach( $arr as $key => $value )
+						{
+							$value = trim($value);
+							if(strlen($value))
+							{
+								$trackers[] = $value;
+								$rt->list[] = $value;
+                                                        }
+                                                        else
+							{
+								if(count($trackers)>0)
+								{
 									$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
 									$trackers = array();
-}
-}
-}
-}
+								}
+							}
+						}
+					}
 					$rt->store();
 					if(count($trackers)>0)
 						$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
@@ -109,24 +114,24 @@ if(count($trackers)>0) {
 						$pathToCreatetorrent = $useExternal;
 					if($useExternal=="mktorrent")
 						$piece_size = log($piece_size,2);
-else
+					else
 					if($useExternal===false)
 						$useExternal = "inner";
-	$task = new rTask( array( 
-		'arg' => getFileName($path_edit),
-		'requester'=>'create',
-		'name'=>'create', 
-		'path_edit'=>$_REQUEST['path_edit'],
-		'trackers'=>$_REQUEST['trackers'],
-		'comment'=>$_REQUEST['comment'],
-		'source'=>$_REQUEST['source'],
-		'start_seeding'=>$_REQUEST['start_seeding'],
-		'piece_size'=>$_REQUEST['piece_size'],
-		'private'=>$_REQUEST['private']
-));
-	
-	$commands = array();
-	$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
+					$task = new rTask( array
+					( 
+						'arg' => getFileName($path_edit),
+						'requester'=>'create',
+						'name'=>'create', 
+						'path_edit'=>$_REQUEST['path_edit'],
+						'trackers'=>$_REQUEST['trackers'],
+						'comment'=>$_REQUEST['comment'],
+						'source'=>$_REQUEST['source'],
+						'start_seeding'=>$_REQUEST['start_seeding'],
+						'piece_size'=>$_REQUEST['piece_size'],
+						'private'=>$_REQUEST['private']
+					) );
+					$commands = array();
+					$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
 						$task->id." ".
 						escapeshellarg(getPHP())." ".
 						escapeshellarg($pathToCreatetorrent)." ".
@@ -139,23 +144,24 @@ else
 					$commands[] = '}';						
 					$ret = $task->start($commands, 0);
 					break;
-} else
-	$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
-}
-	$ret = array( "no"=>-1, "pid"=>0, "status"=>255, "log"=>array(), "errors"=>array($error) );
+				}
+				else
+					$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
+			}
+			$ret = array( "no"=>-1, "pid"=>0, "status"=>255, "log"=>array(), "errors"=>array($error) );
 			break;
-}
-
-case "getfile": {
-			$dir = rTask::formatPath($_REQUEST['no']);
-			$torrent = new Torrent($dir."/result.torrent");
-if( !$torrent->errors() )
-	$torrent->send();
-else
-			header('HTTP/1.0 404 Not Found');
-exit();
-}
-}
+		}
+		case "getfile":
+		{
+			$dir = rTask::formatPath( $_REQUEST['no'] );
+			$torrent = new Torrent( $dir."/result.torrent" );
+			if( !$torrent->errors() )
+				$torrent->send();
+			else
+				header('HTTP/1.0 404 Not Found');
+			exit();
+		}
+	}
 }
 
 cachedEcho(safe_json_encode($ret),"application/json");

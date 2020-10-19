@@ -71,5 +71,3 @@ class rRetrackers
 		return("theWebUI.retrackers = ".safe_json_encode($this).";\n");
 	}
 }
-
-?>

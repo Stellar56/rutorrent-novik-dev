@@ -450,17 +450,18 @@ class Torrent
 			$pieces .= self::pack( $piece );
 		fclose( $handle );
 		return(array(
-            'length'        => filesize( $file ),
-            'name'          => basename( $file ),
-            'piece length'  => $piece_length,
-            'pieces'        => $pieces
-));
-}
+            		'length'        => filesize( $file ),
+            		'name'          => basename( $file ),
+            		'piece length'  => $piece_length,
+            		'pieces'        => $pieces
+        		));
+    	}
     	
-private static function sortNames($a,$b) {
-	$ret = substr_count($b,DIRECTORY_SEPARATOR)-substr_count($a,DIRECTORY_SEPARATOR);
+    	private static function sortNames($a,$b)
+    	{
+		$ret = substr_count($b,DIRECTORY_SEPARATOR)-substr_count($a,DIRECTORY_SEPARATOR);
 		return( ($ret==0) ? strcoll($a, $b) : $ret );
-}
+    	}
 
 	/** Build torrent info from files
 	 * @param array file list
@@ -540,10 +541,11 @@ private static function sortNames($a,$b) {
 	/** Set torrent creator and creation date
 	 * @return void
 	 */
-protected function touch() {
-    $this->{'created by'}       = 'ruTorrent (PHP Class - Adrien Gibrat)';
-	$this->{'creation date'}    = time();
-}
+	protected function touch()
+	{
+        	$this->{'created by'}       = 'ruTorrent (PHP Class - Adrien Gibrat)';
+	        $this->{'creation date'}    = time();
+    	}
 
 	/** Helper scan directories files and sub directories recursivly
 	 * @param string directory path

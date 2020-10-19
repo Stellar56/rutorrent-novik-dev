@@ -6,3 +6,5 @@ $req = new rXMLRPCRequest( array(
 	rTorrentSettings::get()->getRemoveScheduleCommand('autowatch')
 	));
 $req->run();
+
+?>

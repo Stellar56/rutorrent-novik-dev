@@ -89,3 +89,4 @@ function sqlite_db_name()
 	return( (PHP_VERSION_ID < 50400) ? "peers.dat" : "peers3.dat" );
 }
 
+?>
