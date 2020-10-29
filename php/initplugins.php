@@ -16,7 +16,8 @@ execute = {sh,-c,/usr/local/bin/php /usr/local/www/rt/php/initplugins.php user_n
 if( !chdir( dirname( __FILE__ ) ) )
         exit();
 
-function pluginsSort($a, $b) { 
+function pluginsSort($a, $b)
+{ 
 	$lvl1 = (float) $a["level"];
 	$lvl2 = (float) $b["level"];
 	if($lvl1>$lvl2)
@@ -39,8 +40,9 @@ function getFlag($permissions,$pname,$fname)
 	return($ret);
 }
 
-function getPluginInfo($name, $permissions) {
-    $info = array( 
+function getPluginInfo( $name, $permissions )
+{
+        $info = array( 
 		'rtorrent.php.error'=>array(),
 		'rtorrent.external.error'=>array(),
 		'rtorrent.script.error'=>array(),
@@ -51,12 +53,13 @@ function getPluginInfo($name, $permissions) {
 		'php.version'=>0x50000,
 		'plugin.may_be_shutdowned'=>1,
 		'plugin.may_be_launched'=>1,
-);
-
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
-foreach($lines as $line) {
+		foreach($lines as $line)
+		{
 			$fields = explode(":",$line,2);
 			if(count($fields)==2)
 			{
@@ -229,5 +232,3 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 	}
 	$theSettings->store();
 }
-
-?>

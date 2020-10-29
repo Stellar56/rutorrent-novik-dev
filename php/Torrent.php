@@ -515,14 +515,14 @@ class Torrent
 			case 0:
 				return false;
 			default:
-	return(array(
-		'files'         => $info_files,
-		'name'          => end( $path ),
-		'piece length'  => $piece_length,
-		'pieces'        => $pieces . ( $piece ? self::pack( $piece ) : '' )
-));
-}
-}
+				return(array(
+					'files'         => $info_files,
+					'name'          => end( $path ),
+					'piece length'  => $piece_length,
+					'pieces'        => $pieces . ( $piece ? self::pack( $piece ) : '' )
+					));
+        	}
+    	}
 
 	/** Build torrent info from folder content
 	 * @param string folder path
@@ -599,5 +599,3 @@ class Torrent
         	return(isset( $this->info ) ? strtoupper(sha1( self::encode( $this->info ) )) : null);
 	}
 }
-
-?>

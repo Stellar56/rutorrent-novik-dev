@@ -77,36 +77,45 @@ class rTorrentSettings
 
 	public function registerEventHook( $plugin, $ename, $level = 10, $save = false )
 	{
-	$subject = array(
-		"name" => $plugin,
-		"level" => $level,
-);
+		$subject = array
+		(
+			"name" => $plugin,
+			"level" => $level,
+		);
 
-	$sort = function ($a,$b) 
-{ 
-	$lvl1 = (float) $a["level"];
-	$lvl2 = (float) $b["level"];
-		return( $lvl1 > $lvl2 ? 1 : ($lvl1 < $lvl2 ? -1 : strcmp($a["name"], $b["name"]) ));
-};
+		$sort = function ($a,$b) 
+		{ 
+			$lvl1 = (float) $a["level"];
+			$lvl2 = (float) $b["level"];
+			return( $lvl1 > $lvl2 ? 1 : 
+				($lvl1 < $lvl2 ? -1 : strcmp($a["name"], $b["name"]) ));
+		};
 
-if(is_array($ename)) {
-foreach( $ename as $name ) {
-	$this->hooks[$name][] = $subject;
+		if(is_array($ename))
+		{
+			foreach( $ename as $name )
+			{
+				$this->hooks[$name][] = $subject;
 				usort( $this->hooks[$name], $sort );
-}
-} else {
-	$this->hooks[$ename][] = $subject;
+			}
+		}
+		else
+		{
+			$this->hooks[$ename][] = $subject;
 			usort( $this->hooks[$ename], $sort );
-}
+		}
 		// hooks with lesser level runs first
-if($save) {
-	$this->store();
-}
-}
-
-protected function unregisterEventHookPrim( $plugin, $ename ) {
-if( array_key_exists($ename, $this->hooks) ) {
-for( $i = 0; $i<count($this->hooks[$ename]); $i++ ) {
+		if( $save )
+		{
+			$this->store();
+		}
+	}
+	protected function unregisterEventHookPrim( $plugin, $ename )
+	{
+	        if( array_key_exists($ename, $this->hooks) )
+	        {
+			for( $i = 0; $i<count($this->hooks[$ename]); $i++ )
+			{
 				if($this->hooks[$ename][$i] == $plugin)
 				{
 					unset($this->hooks[$ename][$i]);
@@ -239,18 +248,18 @@ for( $i = 0; $i<count($this->hooks[$ename]); $i++ ) {
 			{
 				if(!$req->fault)
 					$this->badXMLRPCVersion = false;
-	$req = new rXMLRPCRequest( array(
-		new rXMLRPCCommand("get_directory"),
-		new rXMLRPCCommand("get_session"),
-		new rXMLRPCCommand("system.library_version"),
-		new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
-		new rXMLRPCCommand("get_name"),
-		new rXMLRPCCommand("get_port_range"),
-		new rXMLRPCCommand("get_bind"),
-		new rXMLRPCCommand("get_ip"),
-) );
-
-if($req->success()) {
+				$req = new rXMLRPCRequest( array(
+					new rXMLRPCCommand("get_directory"),
+					new rXMLRPCCommand("get_session"),
+					new rXMLRPCCommand("system.library_version"),
+					new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
+					new rXMLRPCCommand("get_name"),
+					new rXMLRPCCommand("get_port_range"),
+					new rXMLRPCCommand("get_bind"),
+					new rXMLRPCCommand("get_ip"),
+					) );
+				if($req->success())
+				{
 					$this->directory = $req->val[0];
   		        	        $this->session = $req->val[1];
 					$this->libVersion = $req->val[2];
@@ -416,5 +425,3 @@ if($req->success()) {
 		}
 	}
 }
-
-?>

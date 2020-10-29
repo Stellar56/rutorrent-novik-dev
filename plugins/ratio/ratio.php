@@ -111,7 +111,9 @@ class rRatio
 	}
 	public function isCorrect($no)
 	{
-		return( ($no>=0) && ($no<count($this->rat)) && ($this->rat[$no]["name"]!=""));
+		return( ($no>=0) && 
+			($no<count($this->rat)) &&
+		        ($this->rat[$no]["name"]!=""));
 	}
 	public function correct()
 	{
@@ -263,5 +265,3 @@ class rRatio
 		return($ret."];\ntheWebUI.maxRatio = ".MAX_RATIO.";\ntheWebUI.defaultRatio = ".$this->default.";\n");
 	}
 }
-
-?>

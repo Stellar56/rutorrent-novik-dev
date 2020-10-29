@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__)."/cloudflare.php");
+require_once( dirname(__FILE__)."/cloudflare.php" );
 
 class _cloudflareHooks
 {

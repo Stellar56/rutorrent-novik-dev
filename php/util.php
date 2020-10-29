@@ -6,10 +6,11 @@ if(function_exists('ini_set'))
 	ini_set('log_errors',true);
 }
 
-if(!isset($_SERVER['REMOTE_USER'])) {
-if(isset($_SERVER['PHP_AUTH_USER']))
-	$_SERVER['REMOTE_USER'] = $_SERVER['PHP_AUTH_USER'];
-else
+if(!isset($_SERVER['REMOTE_USER']))
+{
+	if(isset($_SERVER['PHP_AUTH_USER']))
+		$_SERVER['REMOTE_USER'] = $_SERVER['PHP_AUTH_USER'];
+	else
 	if(isset($_SERVER['REDIRECT_REMOTE_USER']))
 		$_SERVER['REMOTE_USER'] = $_SERVER['REDIRECT_REMOTE_USER'];
 }
@@ -29,20 +30,27 @@ if(!isset($locale))
 	$locale = "UTF8";
 getProfilePath();	// for creation profile, if it is absent
 
-function stripSlashesFromArray(&$arr) {
-if(is_array($arr)) {
-foreach($arr as $k=>$v) {
-if(is_array($v)) {
+function stripSlashesFromArray(&$arr)
+{
+        if(is_array($arr))
+        {
+		foreach($arr as $k=>$v)
+		{
+			if(is_array($v))
+			{
 				stripSlashesFromArray($v);
 				$arr[$k] = $v;
-} else {
+			}
+			else
+			{
 				$arr[$k] = stripslashes($v);
-}
-}
-}
+			}
+		}
+	}
 }
 
-function fix_magic_quotes_gpc() {
+function fix_magic_quotes_gpc() 
+{
 	if(version_compare(phpversion(), '5.4', '<'))
 	{
 		if(function_exists('ini_set'))
@@ -98,7 +106,8 @@ function isInvalidUTF8($str)
 function win2utf($str) 
 {
 	$outstr='';
-	$recode=array(
+	$recode=array
+	(
 		0x0402,0x0403,0x201A,0x0453,0x201E,0x2026,0x2020,0x2021,
 		0x20AC,0x2030,0x0409,0x2039,0x040A,0x040C,0x040B,0x040F,
 		0x0452,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,
@@ -115,7 +124,7 @@ function win2utf($str)
 		0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F,
 		0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
 		0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F
-);
+	);
 	$and=0x3F;
 	for($i=0;$i<strlen($str);$i++) 
 	{
@@ -738,5 +747,3 @@ function iclamp( $val, $min = 0, $max = XMLRPC_MAX_I8 )
 		$val = $max;
 	return( ((PHP_INT_SIZE>4) || ( ($val>=PHP_INT_MIN) && ($val<=PHP_INT_MAX) )) ? intval($val) : $val );
 }
-
-?>

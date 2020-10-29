@@ -51,9 +51,10 @@ function getPluginInfo( $name, $permissions )
 		'web.external.warning'=>array(),
 		'web.external.error'=>array(),
 		'plugin.help'=>'',
-);
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
 		foreach($lines as $line)
 		{
@@ -328,7 +329,9 @@ if($handle = opendir('../plugins'))
 				$info = getPluginInfo( $file, $permissions );
 				if($info) 
 				{
-if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="user-defined") {
+					if(     $info["plugin.may_be_launched"] && 
+						getFlag($permissions,$file,"enabled")=="user-defined")
+					{
 					        $info["perms"] |= $canBeLaunched;
 						if(!$userPermissions[$file])
 						{
@@ -456,17 +459,18 @@ if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="us
 								$jResult.="noty('".$file.": '+theUILang.phpExtensionNotFoundWarning+' ('+'".$extension."'+').','error');";
 					}
 					$js = "../plugins/".$file."/init.js";
-if(!is_readable($js))
+	                	        if(!is_readable($js))
 						$js = NULL;
         		                $php = "../plugins/".$file."/init.php";
-if(!is_readable($php))
+					if(!is_readable($php))
 						$php = NULL;
 					$init[] = array( "js" => $js, "php" => $php, "info" => $info, "name" => $file );
 					$names[] = $file;
 				}
 			}
 		} 
-if($phpRequired) {
+		if($phpRequired)
+		{
 			$val = strtoupper(ini_get("register_argc_argv"));
 			if( $val!=='' && $val!='ON' && $val!='1' && $val!='TRUE' )
 				$jResult.="noty(theUILang.phpParameterUnavailable,'error');";
@@ -522,5 +526,3 @@ if($phpRequired) {
 }
 
 cachedEcho($jResult,"application/javascript",true);
-
-?>

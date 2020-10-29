@@ -13,3 +13,5 @@ else
 $jResult .= "plugin.collectStatForTorrents = ".($collectStatForTorrents ? "true;" : "false;");
 $jResult .= "plugin.updateInterval = ".$updateInterval.";";
 $jResult .= "plugin.disableClearButton = ".($disableClearButton ? "true" : "false").";";
+
+?>

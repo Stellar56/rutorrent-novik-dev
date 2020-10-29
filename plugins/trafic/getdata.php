@@ -71,3 +71,5 @@ if(isset($_REQUEST['mode']))
 }
 
 cachedEcho(safe_json_encode($ret),"application/json");
+
+?>

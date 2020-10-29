@@ -82,29 +82,33 @@ class rCache
 			}
 			else
 			{
-if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($tmp->version)) || (isset($tmp->version) && ($tmp->version==$rss->version)))) {
-	$rss = $tmp;
-	$rss->modified = filemtime($fname);
-	$ret = true;
-} else
-	$ret = false;
-}
-}
+				if(($tmp!==false) && 
+					(!isset($rss->version) || 
+					(isset($rss->version) && !isset($tmp->version)) ||
+					(isset($tmp->version) && ($tmp->version==$rss->version))))
+				{
+				        $rss = $tmp;
+					$rss->modified = filemtime($fname);
+					$ret = true;
+				}
+				else
+					$ret = false;
+			}
+        	}
 		return($ret);
-}
-
-public function remove($rss) {
+	}
+	public function remove( $rss )
+	{
 		return(@unlink($this->getName($rss)));
-}
-
-protected function getName($rss) {
-	    return($this->dir."/".(is_object($rss) ? $rss->hash : $rss['__hash__']));
-}
-	
-public function getModified( $obj = null ) {
-		return(filemtime( is_null($obj) ? $this->dir : (is_object($obj) ? $this->getName($obj) : $this->dir."/".$obj) ));
+	}
+	protected function getName($rss)
+	{
+	        return($this->dir."/".(is_object($rss) ? $rss->hash : $rss['__hash__']));
+	}
+	public function getModified( $obj = null )
+	{
+		return(filemtime( is_null($obj) ? $this->dir : 
+			(is_object($obj) ? $this->getName($obj) : $this->dir."/".$obj) ));
 			
+	}
 }
-}
-
-?>
