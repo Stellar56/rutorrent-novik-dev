@@ -136,38 +136,34 @@ class rStat
 	}
         public function getDay()
 	{
-		return(array
-		(
+		return(array(
 			"up" 		=> $this->hourUp,
 			"down" 		=> $this->hourDown,
 			"labels" 	=> $this->hourHitTimes,
 			"mode" 		=> 'day',
 			"trackers" 	=> self::getTrackers()
-		));
+));
 
-	}
-        public function getMonth()
-	{
-		return(array
-		(
+}
+public function getMonth() {
+		return(array(
 			"up" 		=> $this->monthUp,
 			"down" 		=> $this->monthDown,
 			"labels"	=> $this->monthHitTimes,
 			"mode"	 	=> 'month',
 			"trackers"	=> self::getTrackers()
-		));
-	}
-        public function getYear()
-	{
-		return(array
-		(
+));
+}
+
+public function getYear() {
+		return(array(
 			"up" 		=> $this->yearUp,
 			"down"		=> $this->yearDown,
 			"labels"	=> $this->yearHitTimes,
 			"mode"		=> 'year',
 			"trackers"	=> self::getTrackers()
-		));
-	}
+));
+}
 	public function getRatios( $time )
 	{
 		$ret = array(0,0,0);
@@ -184,3 +180,5 @@ class rStat
 		return($ret);
 	}
 }
+
+?>

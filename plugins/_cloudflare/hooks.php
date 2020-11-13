@@ -21,5 +21,3 @@ class _cloudflareHooks
 		}
 	}
 }
-
-?>

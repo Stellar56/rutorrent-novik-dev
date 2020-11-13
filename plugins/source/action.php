@@ -67,5 +67,3 @@ if(isset($_POST['hash']))
 }
 header("HTTP/1.0 302 Moved Temporarily");
 header("Location: action.php?result=0");
-
-?>

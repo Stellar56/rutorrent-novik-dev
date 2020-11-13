@@ -8,16 +8,18 @@
 		$hst = rHistoryData::load();
 		$mgr = rHistory::load();
 		$action = intval($argv[1]);
-		$actions = array(
+		$actions = array
+		(
 			1 => 'addition', 
 			2 => 'finish', 
 			3 => 'deletion',
-);
+		);
 		$tracker = '';
 		$pos = strpos( $argv[10], '#' );
 		if($pos!==false)
 			$tracker = substr( $argv[10], 0, $pos );
-		$data = array(
+		$data = array
+		(
 			"action"=>$action,
 			"name"=>$argv[2], 
 			"size"=>floatval($argv[3]), 
@@ -29,15 +31,13 @@
 			"finished"=>intval($argv[9]), 
 			"tracker"=>$tracker,
 			"label"=>rawurldecode($argv[11]),
-);
-
-if($mgr->log[$actions[$action]]) {
+		);
+		if($mgr->log[$actions[$action]])
+		{
 			$hst->add( $data, $mgr->log["limit"] );
-}
-
-if($mgr->log['pushbullet_enabled'] && $mgr->log['pushbullet_'.$actions[$action]] && !$argv[12]) {
+		}
+		if($mgr->log['pushbullet_enabled'] && $mgr->log['pushbullet_'.$actions[$action]] && !$argv[12])
+		{
 			$mgr->pushBulletNotify( $data );
-}
-}
-
-?>
+		}
+	}
