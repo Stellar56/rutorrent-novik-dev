@@ -2,8 +2,7 @@
 
 if( count( $argv ) > 2 )
 	$_SERVER['REMOTE_USER'] = $argv[2];
-if( count( $argv ) > 1 )
-{
+if(count( $argv ) > 1) {
 	require_once( dirname(__FILE__).'/../../php/xmlrpc.php' );
 	require_once( dirname(__FILE__).'/../../php/Torrent.php' );
 	require_once( dirname(__FILE__).'/../../php/rtorrent.php' );
@@ -45,43 +44,37 @@ if( count( $argv ) > 1 )
 			foreach( $arr as $key => $value )
 			{
 				$value = trim($value);
-				if(strlen($value))
-				{
+if(strlen($value)) {
 					$trackers[] = $value;
 					$trackersCount = $trackersCount+1;
-				}
-				else
-				{
-					if(count($trackers)>0)
-					{
+} else {
+if(count($trackers)>0) {
 						$announce_list[] = $trackers;
 						$trackers = array();
-					}
-				}
-			}
-		}
-		if(count($trackers)>0)
-			$announce_list[] = $trackers;
-		$path_edit = trim($request['path_edit']);
-		$piece_size = $request['piece_size'];
-		$callback_log = "log_stdout";
-		$callback_err = "log_stderr";
+}
+}
+}
+}
 
-		if(count($announce_list)>0)
-		{
+if(count($trackers)>0)
+	$announce_list[] = $trackers;
+	$path_edit = trim($request['path_edit']);
+	$piece_size = $request['piece_size'];
+	$callback_log = "log_stdout";
+	$callback_err = "log_stderr";
+
+if(count($announce_list)>0) {
 			$torrent = new Torrent($path_edit,$announce_list[0][0],$piece_size,$callback_log,$callback_err);
 			if($trackersCount>1)
 				$torrent->announce_list($announce_list);
-		}
-		else
-               	        $torrent = new Torrent($path_edit,array(),$piece_size,$callback_log,$callback_err);
+} else
+    $torrent = new Torrent($path_edit,array(),$piece_size,$callback_log,$callback_err);
 
-        if (isset($request['source']) && strlen($request['source']) !== 0) {
-            $torrent->source(trim($request['source']));
-        }
+if (isset($request['source']) && strlen($request['source']) !== 0) {
+    $torrent->source(trim($request['source']));
+}
 
-		if(isset($request['comment']))
-		{
+if(isset($request['comment'])) {
 			$comment = trim($request['comment']);
 			if(strlen($comment))
 				$torrent->comment($comment);
@@ -113,3 +106,5 @@ if( count( $argv ) > 1 )
 	}
 	exit(1);
 }
+
+?>
