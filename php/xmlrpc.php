@@ -237,5 +237,3 @@ function getCmd($cmd)
 {
 	return(rTorrentSettings::get()->getCommand($cmd));
 }
-
-?>
