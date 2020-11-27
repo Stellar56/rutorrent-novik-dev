@@ -329,43 +329,36 @@ if($handle = opendir('../plugins'))
 				$info = getPluginInfo( $file, $permissions );
 				if($info) 
 				{
-					if(     $info["plugin.may_be_launched"] && 
-						getFlag($permissions,$file,"enabled")=="user-defined")
-					{
-					        $info["perms"] |= $canBeLaunched;
-						if(!$userPermissions[$file])
-						{
+if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="user-defined") {
+	$info["perms"] |= $canBeLaunched;
+if(!$userPermissions[$file]) {
 							$info["perms"] |= $disabledByUser;
 							$disabled[$file] = $info;
 							$info = false;
-						}
-					}
-					else
-						$info["perms"] |= $cantBeShutdowned;
-				}
-				if($info!==false)
-				{
-				        if(!$theSettings->linkExist && $info["rtorrent.need"])
-				        {
-					        $disabled[$file] = $info;
-						continue;
-					}
-					if($info['php.version']>$phpIVersion)
-					{
-						$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
-					        $disabled[$file] = $info;
-						continue;
-					}
-					$extError = false;
+}
+} else
+	$info["perms"] |= $cantBeShutdowned;
+}
+
+if($info!==false) {
+if(!$theSettings->linkExist && $info["rtorrent.need"]) {
+	$disabled[$file] = $info;
+continue;
+}
+if($info['php.version']>$phpIVersion) {
+	$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
+	$disabled[$file] = $info;
+continue;
+}
+	$extError = false;
 
 					foreach( $info['php.extensions.error'] as $extension )
-						if(!in_array( $extension, $loadedExtensions ))
-						{
+if(!in_array( $extension, $loadedExtensions )) {
 							$jResult.="noty('".$file.": '+theUILang.phpExtensionNotFoundError+' ('+'".$extension."'+').','error');";
 							$extError = true;
-						}
-					if($extError)
-					{
+}
+
+if($extError) {
 					        $disabled[$file] = $info;
 						continue;
 					}
@@ -526,3 +519,5 @@ if($handle = opendir('../plugins'))
 }
 
 cachedEcho($jResult,"application/javascript",true);
+
+?>

@@ -58,60 +58,72 @@
 						{
 							$country = strtolower($country);
 							$org = '';
-if(geoip_db_avail(GEOIP_ORG_EDITION)) {
-	$org = utf8_encode(geoip_org_by_name($value));
-if(!empty($org))
-	$city[] = $org;
-}
-if(geoip_db_avail(GEOIP_ISP_EDITION)) {
+							if(geoip_db_avail(GEOIP_ORG_EDITION))
+							{
+								$org = utf8_encode(geoip_org_by_name($value));
+								if(!empty($org))
+									$city[] = $org;
+							}
+							if(geoip_db_avail(GEOIP_ISP_EDITION))
+							{
 								$c = utf8_encode(geoip_isp_by_name($value));
-if(!empty($c) && ($c!=$org))
-	$city[] = $c;
-}
-}
-} else
-	$country = "un";
-if(!empty($city))
-    $country.=" (".implode(', ',$city).")";
-	$host = $value;
-if($retrieveHost) {
-if($dns) {
-	$pkt = pack("n", $randbase + $idx) . "\1\0\0\1\0\0\0\0\0\0";
-	$ipmap[$value] = $idx++;
-if (substr($value, 0, 1) == '[') {
-	$a = '';
-	foreach(str_split(inet_pton(substr($value, 1, -1))) as $char) $a .= str_pad(dechex(ord($char)), 2, '0', STR_PAD_LEFT);
-	$pkt .= "\1" . implode("\1", str_split(strrev($a))) . "\3ip6\4arpa\0\0\x0C\0\1";
-} else {
-	foreach (array_reverse(explode(".", $value)) as $part)
-	$pkt .= chr(strlen($part)) . $part;
-	$pkt .= "\7in-addr\4arpa\0\0\x0C\0\1";
-}
+								if(!empty($c) && ($c!=$org))
+									$city[] = $c;
+							}
+						}
+                    			}
+					else
+						$country = "un";
+					if(!empty($city))
+                                               $country.=" (".implode(', ',$city).")";
+					$host = $value;
+                                        if($retrieveHost)
+                                        {
+						if($dns) 
+						{
+							$pkt = pack("n", $randbase + $idx) . "\1\0\0\1\0\0\0\0\0\0";
+							$ipmap[$value] = $idx++;
+							if (substr($value, 0, 1) == '[')
+							{
+								$a = '';
+								foreach(str_split(inet_pton(substr($value, 1, -1))) as $char) $a .= str_pad(dechex(ord($char)), 2, '0', STR_PAD_LEFT);
+								$pkt .= "\1" . implode("\1", str_split(strrev($a))) . "\3ip6\4arpa\0\0\x0C\0\1";
+							}
+							else
+							{
+								foreach (array_reverse(explode(".", $value)) as $part)
+									$pkt .= chr(strlen($part)) . $part;
+								$pkt .= "\7in-addr\4arpa\0\0\x0C\0\1";
+							}
 							fwrite($dns, $pkt);
 							fflush($dns);
 							$host = $value;
-} else {
-	$host = gethostbyaddr(preg_replace('/^\[?(.+?)\]?$/', '$1', $value));
-if(empty($host) || (strlen($host)<2))
-    $host = $value;
-}
-}
-    $comment = '';
-if($retrieveComments) {
+						} 
+						else 
+						{
+                                                	$host = gethostbyaddr(preg_replace('/^\[?(.+?)\]?$/', '$1', $value));
+	                                                if(empty($host) || (strlen($host)<2))
+        	                                                $host = $value;
+						}
+                                        }
+                                        $comment = '';
+                                        if($retrieveComments)
+                                        {
         					require_once( 'ip_db.php' );
         					$db = new ipDB();
         					$comment = $db->get($value);
-}
-	$ret[] = array( "ip"=>$value, "info"=>array( "country"=>$country, "host"=>$host, "comment"=>$comment ) );
-}
-}
-}
-
-if($dns) {
+                                        }
+					$ret[] = array( "ip"=>$value, "info"=>array( "country"=>$country, "host"=>$host, "comment"=>$comment ) );
+				}
+			}
+		}
+		if($dns) 
+		{
 			stream_set_timeout($dns, $dnsResolverTimeout);
-while($idx && ($buf=@fread($dns, 512))) {
-	$pos = 12;
-	$ip = array();
+			while($idx && ($buf=@fread($dns, 512))) 
+			{
+				$pos = 12;
+				$ip = array();
 				$id = ord($buf[0]) * 256 + ord($buf[1]) - $randbase;
 				while($count = ord($buf[$pos++])) 
 				{
@@ -155,4 +167,3 @@ while($idx && ($buf=@fread($dns, 512))) {
 	}
 	cachedEcho(safe_json_encode($ret),"application/json");
 	
-?>

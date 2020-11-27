@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__)."/../../php/cache.php");
+require_once( dirname(__FILE__)."/../../php/cache.php" );
 eval(getPluginConf('cpuload'));
 
 class rCPU
@@ -17,10 +17,11 @@ class rCPU
 			$cache = new rCache();
 			if(!$cache->get($cpu))
 				$cpu->obtain();
-} else
+		}
+		else
 			$cpu->count = $processorsCount;
 		return($cpu);
-}
+	}
 
 	public function store()
 	{
@@ -52,5 +53,3 @@ class rCPU
 		return( round(min($arr[0]*100/$this->count,100)) );
 	}
 }
-
-?>
