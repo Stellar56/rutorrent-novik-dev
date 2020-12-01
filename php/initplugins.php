@@ -53,20 +53,23 @@ function getPluginInfo( $name, $permissions )
 		'php.version'=>0x50000,
 		'plugin.may_be_shutdowned'=>1,
 		'plugin.may_be_launched'=>1,
-);
-
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
-foreach($lines as $line) {
+		foreach($lines as $line)
+		{
 			$fields = explode(":",$line,2);
-if(count($fields)==2) {
+			if(count($fields)==2)
+			{
 				$value = addcslashes(trim($fields[1]),"\\\'\"\n\r\t");
 				$field = trim($fields[0]); 
-switch($field) {
+				switch($field)
+				{
 					case "plugin.may_be_shutdowned":
-    case "plugin.may_be_launched":
-{
+                                        case "plugin.may_be_launched":
+                                        {
                                         	$info[$field] = intval($value);
 						break;
                                         }

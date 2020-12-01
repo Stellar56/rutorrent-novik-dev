@@ -138,27 +138,26 @@ function getPluginInfo( $name, $permissions )
 		{
 			if(!getFlag($permissions,$name,"enabled"))
 				return(false);
-			$flags = array(
-				"canChangeToolbar" 	=> 0x0001,
-				"canChangeMenu" 	=> 0x0002,
-				"canChangeOptions"	=> 0x0004,
-				"canChangeTabs"		=> 0x0008,
-				"canChangeColumns"	=> 0x0010,
-				"canChangeStatusBar"	=> 0x0020,
-				"canChangeCategory"	=> 0x0040,
-				"canBeShutdowned"	=> 0x0080,
+	$flags = array(
+		"canChangeToolbar" 	=> 0x0001,
+		"canChangeMenu" 	=> 0x0002,
+		"canChangeOptions"	=> 0x0004,
+		"canChangeTabs"		=> 0x0008,
+		"canChangeColumns"	=> 0x0010,
+		"canChangeStatusBar"	=> 0x0020,
+		"canChangeCategory"	=> 0x0040,
+		"canBeShutdowned"	=> 0x0080,
 			/*	"canBeLaunched"		=> 0x0100, */
-				);
+);
 			foreach($flags as $flagName=>$flagVal)
-				if(!getFlag($permissions,$name,$flagName))
-					$perms|=$flagVal;
+if(!getFlag($permissions,$name,$flagName))
+	$perms|=$flagVal;
 
-			if(!$info["plugin.may_be_shutdowned"])
-				$perms|=$flags["canBeShutdowned"];
-
-		}
-		$info["perms"] = $perms;
-	}
+if(!$info["plugin.may_be_shutdowned"])
+	$perms|=$flags["canBeShutdowned"];
+}
+	$info["perms"] = $perms;
+}
 	return(array_key_exists("plugin.version",$info) ? $info : false);
 }
 
@@ -215,6 +214,7 @@ $settingsFlags = array(
 	"canAddTorrentsWithResume"	=> 0x0400,	
 	"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
 );
+
 $perms = 0;
 foreach($settingsFlags as $flagName=>$flagVal)
 	if(!array_key_exists($flagName,$permissions) || $permissions[$flagName])
@@ -329,36 +329,43 @@ if($handle = opendir('../plugins'))
 				$info = getPluginInfo( $file, $permissions );
 				if($info) 
 				{
-if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="user-defined") {
-	$info["perms"] |= $canBeLaunched;
-if(!$userPermissions[$file]) {
+					if(     $info["plugin.may_be_launched"] && 
+						getFlag($permissions,$file,"enabled")=="user-defined")
+					{
+					        $info["perms"] |= $canBeLaunched;
+						if(!$userPermissions[$file])
+						{
 							$info["perms"] |= $disabledByUser;
 							$disabled[$file] = $info;
 							$info = false;
-}
-} else
-	$info["perms"] |= $cantBeShutdowned;
-}
-
-if($info!==false) {
-if(!$theSettings->linkExist && $info["rtorrent.need"]) {
-	$disabled[$file] = $info;
-continue;
-}
-if($info['php.version']>$phpIVersion) {
-	$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
-	$disabled[$file] = $info;
-continue;
-}
-	$extError = false;
+						}
+					}
+					else
+						$info["perms"] |= $cantBeShutdowned;
+				}
+				if($info!==false)
+				{
+				        if(!$theSettings->linkExist && $info["rtorrent.need"])
+				        {
+					        $disabled[$file] = $info;
+						continue;
+					}
+					if($info['php.version']>$phpIVersion)
+					{
+						$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
+					        $disabled[$file] = $info;
+						continue;
+					}
+					$extError = false;
 
 					foreach( $info['php.extensions.error'] as $extension )
-if(!in_array( $extension, $loadedExtensions )) {
+						if(!in_array( $extension, $loadedExtensions ))
+						{
 							$jResult.="noty('".$file.": '+theUILang.phpExtensionNotFoundError+' ('+'".$extension."'+').','error');";
 							$extError = true;
-}
-
-if($extError) {
+						}
+					if($extError)
+					{
 					        $disabled[$file] = $info;
 						continue;
 					}

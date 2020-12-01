@@ -44,34 +44,44 @@ class rCache
 			{
 				ftruncate( $fp, 0 );
 				$str = serialize( $rss );
-if((fwrite( $fp, $str ) == strlen($str)) && fflush( $fp )) {
+	        		if((fwrite( $fp, $str ) == strlen($str)) && fflush( $fp ))
+	        		{
 					flock( $fp, LOCK_UN );
-if(fclose( $fp ) !== false) {
-	    @rename( $name.'.tmp', $name );
-		@chmod($name,$profileMask & 0666);
-	    return(true);
-} else
-		unlink( $name.'.tmp' );
-} else {
-		flock( $fp, LOCK_UN );
-        fclose( $fp );
-        unlink( $name.'.tmp' );
-}	        			
-} else
-		fclose( $fp );
-}
-	    return(false);
-}
-	
-public function get( &$rss ) {
-	$fname = $this->getName($rss);
-	$ret = @file_get_contents($fname);
-if($ret!==false) {
-	$tmp = unserialize($ret);
-if(is_array($tmp)) {
-	$rss = $tmp;				
-	$ret = true;
-} else {
+        				if(fclose( $fp ) !== false)
+        				{
+	       					@rename( $name.'.tmp', $name );
+						@chmod($name,$profileMask & 0666);
+	        				return(true);
+					}
+					else
+						unlink( $name.'.tmp' );
+				}
+				else
+				{
+					flock( $fp, LOCK_UN );
+        				fclose( $fp );
+        				unlink( $name.'.tmp' );
+				}	        			
+	        	}
+	        	else
+		        	fclose( $fp );
+		}
+	        return(false);
+	}
+	public function get( &$rss )
+	{
+	        $fname = $this->getName($rss);
+		$ret = @file_get_contents($fname);
+		if($ret!==false)
+		{
+			$tmp = unserialize($ret);
+			if(is_array($tmp))
+			{
+			        $rss = $tmp;				
+				$ret = true;
+			}
+			else
+			{
 if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($tmp->version)) || (isset($tmp->version) && ($tmp->version==$rss->version)))) {
 	$rss = $tmp;
 	$rss->modified = filemtime($fname);
@@ -82,18 +92,20 @@ if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($
 }
 		return($ret);
 }
-
-public function remove( $rss ) {
+	public function remove( $rss )
+	{
 		return(@unlink($this->getName($rss)));
-}
-	
-protected function getName($rss) {
-	    return($this->dir."/".(is_object($rss) ? $rss->hash : $rss['__hash__']));
-}
-	
-public function getModified( $obj = null ) {
-		return(filemtime( is_null($obj) ? $this->dir : (is_object($obj) ? $this->getName($obj) : $this->dir."/".$obj) ));
-}
+	}
+	protected function getName($rss)
+	{
+	        return($this->dir."/".(is_object($rss) ? $rss->hash : $rss['__hash__']));
+	}
+	public function getModified( $obj = null )
+	{
+		return(filemtime( is_null($obj) ? $this->dir : 
+			(is_object($obj) ? $this->getName($obj) : $this->dir."/".$obj) ));
+			
+	}
 }
 
 ?>

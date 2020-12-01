@@ -97,3 +97,5 @@ if( count( $argv ) > 1 )
 	}
 	exit(1);
 }
+
+?>

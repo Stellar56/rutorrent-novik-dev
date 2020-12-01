@@ -31,7 +31,8 @@ class rTorrentSettings
 
 	static private $theSettings = null;
 
-	private $ratioCmds = array(
+	private $ratioCmds = array
+	(
 		"view",          
 		"view.set",
 		"ratio.min",
@@ -40,13 +41,15 @@ class rTorrentSettings
 		"ratio.max.set",
 		"ratio.upload",
 		"ratio.upload.set",
-);
+	);
 
-private function __construct() {
-if( array_key_exists("browser_timezone",$_COOKIE) ) {
+	private function __construct()
+    	{
+    		if( array_key_exists("browser_timezone",$_COOKIE) )
+    		{
 			$this->tz = $_COOKIE["browser_timezone"];
-}
-}
+		}
+	}
 
 	private function __clone()
     	{
@@ -422,5 +425,3 @@ if( array_key_exists("browser_timezone",$_COOKIE) ) {
 		}
 	}
 }
-
-?>

@@ -6,25 +6,23 @@ require_once( 'settings.php' );
 define('FLAG_CANT_SHUTDOWN',	0x0080);
 define('FLAG_CAN_CHANGE_LAUNCH',0x0100);
 
-$theSettings = rTorrentSettings::get();
-$jResult = "";
 
-$cmd = isset($_REQUEST["cmd"]) ? $_REQUEST["cmd"] : "done";
+	$theSettings = rTorrentSettings::get();
+	$jResult = "";
 
-$userPermissions = array( "__hash__"=>"plugins.dat" );
-$cache = new rCache();
-$cache->get($userPermissions);
+	$cmd = isset($_REQUEST["cmd"]) ? $_REQUEST["cmd"] : "done";
+
+	$userPermissions = array( "__hash__"=>"plugins.dat" );
+	$cache = new rCache();
+	$cache->get($userPermissions);
 
 if(!isset($HTTP_RAW_POST_DATA))
 	$HTTP_RAW_POST_DATA = file_get_contents("php://input");
-if(isset($HTTP_RAW_POST_DATA))
-{
+if(isset($HTTP_RAW_POST_DATA)) {
 	$vars = explode('&', $HTTP_RAW_POST_DATA);
-	foreach($vars as $var)
-	{
+foreach($vars as $var) {
 		$parts = explode("=",$var);
-		if($parts[0]=="plg")
-		{
+if($parts[0]=="plg") {
 			$perms = $theSettings->getPluginData($parts[1]);
 			switch($cmd)
 			{
