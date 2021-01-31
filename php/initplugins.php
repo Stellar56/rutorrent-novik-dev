@@ -156,9 +156,15 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 			if(!array_key_exists($file,$userPermissions))
 				$userPermissions[$file] = true;
 			$info = getPluginInfo( $file, $permissions );
-if($info && $info["plugin.may_be_launched"] && (getFlag($permissions,$file,"enabled")=="user-defined") && !$userPermissions[$file])
-	$info = false;
-if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.version']<=$theSettings->iVersion)) {
+			if($info &&
+				$info["plugin.may_be_launched"] && 
+				(getFlag($permissions,$file,"enabled")=="user-defined") &&
+				!$userPermissions[$file])
+				$info = false;
+			if(($info!==false) &&
+				($info['php.version']<=$phpIVersion) &&
+				($info['rtorrent.version']<=$theSettings->iVersion))
+			{
 				if(count($info['rtorrent.external.error']))
 					eval( getPluginConf( $file ) );
 				$extError = false;
@@ -226,5 +232,3 @@ if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.v
 	}
 	$theSettings->store();
 }
-
-?>
