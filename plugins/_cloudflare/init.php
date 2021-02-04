@@ -16,5 +16,3 @@ if($ok)
 	$theSettings->registerPlugin($plugin["name"],$pInfo["perms"]);
 	$theSettings->registerEventHook($plugin["name"],"URLFetched");
 }
-
-?>
