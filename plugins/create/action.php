@@ -89,21 +89,17 @@ if(isset($_REQUEST['cmd']))
 						foreach( $arr as $key => $value )
 						{
 							$value = trim($value);
-							if(strlen($value))
-							{
+if(strlen($value)) {
 								$trackers[] = $value;
 								$rt->list[] = $value;
-                                                        }
-                                                        else
-							{
-								if(count($trackers)>0)
-								{
+} else {
+if(count($trackers)>0) {
 									$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
 									$trackers = array();
-								}
-							}
-						}
-					}
+}
+}
+}
+}
 					$rt->store();
 					if(count($trackers)>0)
 						$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
@@ -121,21 +117,21 @@ if(isset($_REQUEST['cmd']))
 					
 					if($useExternal===false)
 						$useExternal = "inner";
-					$task = new rTask( array
-					( 
-						'arg' => getFileName($path_edit),
-						'requester'=>'create',
-						'name'=>'create', 
-						'path_edit'=>$_REQUEST['path_edit'],
-						'trackers'=>$_REQUEST['trackers'],
-						'comment'=>$_REQUEST['comment'],
-						'source'=>$_REQUEST['source'],
-						'start_seeding'=>$_REQUEST['start_seeding'],
-						'piece_size'=>$_REQUEST['piece_size'],
-						'private'=>$_REQUEST['private'],
-						'hybrid'=>$_REQUEST['hybrid'],
-					) );
-					$commands = array();
+	$task = new rTask( array( 
+		'arg' => getFileName($path_edit),
+		'requester'=>'create',
+		'name'=>'create', 
+		'path_edit'=>$_REQUEST['path_edit'],
+		'trackers'=>$_REQUEST['trackers'],
+		'comment'=>$_REQUEST['comment'],
+		'source'=>$_REQUEST['source'],
+		'start_seeding'=>$_REQUEST['start_seeding'],
+		'piece_size'=>$_REQUEST['piece_size'],
+		'private'=>$_REQUEST['private'],
+		'hybrid'=>$_REQUEST['hybrid'],
+) );
+	
+	$commands = array();
 
 					$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
 					$task->id." ".
@@ -152,13 +148,12 @@ if(isset($_REQUEST['cmd']))
 					$commands[] = '}';						
 					$ret = $task->start($commands, 0);
 					break;
-				}
-				else
-					$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
-			}
-			$ret = array( "no"=>-1, "pid"=>0, "status"=>255, "log"=>array(), "errors"=>array($error) );
-			break;
-		}
+} else
+	$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
+}
+	$ret = array( "no"=>-1, "pid"=>0, "status"=>255, "log"=>array(), "errors"=>array($error) );
+		break;
+}
 		case "getfile":
 		{
 			$dir = rTask::formatPath( $_REQUEST['no'] );

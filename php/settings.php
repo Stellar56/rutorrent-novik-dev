@@ -77,39 +77,33 @@ class rTorrentSettings
 
 	public function registerEventHook( $plugin, $ename, $level = 10, $save = false )
 	{
-		$subject = array
-		(
-			"name" => $plugin,
-			"level" => $level,
-		);
+	$subject = array(
+		"name" => $plugin,
+		"level" => $level,
+);
 
-		$sort = function ($a,$b) 
-		{ 
+	$sort = function ($a,$b) 
+{ 
 			$lvl1 = (float) $a["level"];
 			$lvl2 = (float) $b["level"];
 			return( $lvl1 > $lvl2 ? 1 : 
 				($lvl1 < $lvl2 ? -1 : strcmp($a["name"], $b["name"]) ));
-		};
+};
 
-		if(is_array($ename))
-		{
-			foreach( $ename as $name )
-			{
+if(is_array($ename)) {
+foreach( $ename as $name ) {
 				$this->hooks[$name][] = $subject;
 				usort( $this->hooks[$name], $sort );
-			}
-		}
-		else
-		{
+}
+} else {
 			$this->hooks[$ename][] = $subject;
 			usort( $this->hooks[$ename], $sort );
-		}
+}
 		// hooks with lesser level runs first
-		if( $save )
-		{
-			$this->store();
-		}
-	}
+if( $save ) {
+	$this->store();
+}
+}
 	protected function unregisterEventHookPrim( $plugin, $ename )
 	{
 	        if( array_key_exists($ename, $this->hooks) )
@@ -425,3 +419,5 @@ class rTorrentSettings
 		}
 	}
 }
+
+?>
