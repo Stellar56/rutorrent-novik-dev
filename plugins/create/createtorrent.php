@@ -1,8 +1,9 @@
 <?php
 
-if(count( $argv ) > 2)
+if( count( $argv ) > 2 )
 	$_SERVER['REMOTE_USER'] = $argv[2];
-if(count( $argv ) > 1) {
+if( count( $argv ) > 1 )
+{
 	require_once( dirname(__FILE__).'/../../php/xmlrpc.php' );
 	require_once( dirname(__FILE__).'/../../php/Torrent.php' );
 	require_once( dirname(__FILE__).'/../../php/rtorrent.php' );
@@ -112,5 +113,3 @@ if(count( $argv ) > 1) {
 	}
 	exit(1);
 }
-
-?>

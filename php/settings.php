@@ -82,28 +82,33 @@ class rTorrentSettings
 		"level" => $level,
 );
 
-	$sort = function ($a,$b) 
-{ 
+		$sort = function ($a,$b) 
+		{ 
 			$lvl1 = (float) $a["level"];
 			$lvl2 = (float) $b["level"];
 			return( $lvl1 > $lvl2 ? 1 : 
 				($lvl1 < $lvl2 ? -1 : strcmp($a["name"], $b["name"]) ));
 };
 
-if(is_array($ename)) {
-foreach( $ename as $name ) {
+		if(is_array($ename))
+		{
+			foreach( $ename as $name )
+			{
 				$this->hooks[$name][] = $subject;
 				usort( $this->hooks[$name], $sort );
-}
-} else {
+			}
+		}
+		else
+		{
 			$this->hooks[$ename][] = $subject;
 			usort( $this->hooks[$ename], $sort );
-}
+		}
 		// hooks with lesser level runs first
-if( $save ) {
-	$this->store();
-}
-}
+		if( $save )
+		{
+			$this->store();
+		}
+	}
 	protected function unregisterEventHookPrim( $plugin, $ename )
 	{
 	        if( array_key_exists($ename, $this->hooks) )
@@ -196,19 +201,18 @@ if( $save ) {
 
 			if($this->iVersion>0x806)
 			{
-				$this->aliases = array
-				(
-					"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
-					"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
-				);
-			}
-			if($this->iVersion==0x808)
-			{
-				$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
-				$req->important = false;
-				if($req->success())
-					$this->iVersion=0x809;
-			}
+	$this->aliases = array(
+		"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
+		"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
+);
+}
+
+if($this->iVersion==0x808) {
+	$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
+	$req->important = false;
+if($req->success())
+	$this->iVersion=0x809;
+}
 			if($this->iVersion>=0x904)
 			{
 				require_once( 'methods-0.9.4.php' );
@@ -225,35 +229,34 @@ if( $save ) {
 
 			if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bind branch of rtorrent
 			{
-				$this->aliases = array_merge($this->aliases,array
-				(
-					"get_port_open"	=> array( "name"=>"network.listen.is_open", "prm"=>0 ),
-					"get_port_random" => array( "name"=>"network.port.randomize", "prm"=>0 ),
-					"get_port_range" => array( "name"=>"network.port.range", "prm"=>0 ),
-					"set_port_open"	=> array( "name"=>"network.listen.open", "prm"=>1 ),
-					"set_port_random" => array( "name"=>"network.port.randomize.set", "prm"=>1 ),
-					"set_port_range" => array( "name"=>"network.port.range.set", "prm"=>1 ),
-					"network.listen.port" => array( "name"=>"network.port", "prm"=>0 ),
-				));
-			}
+	$this->aliases = array_merge($this->aliases,array(
+		"get_port_open"	=> array( "name"=>"network.listen.is_open", "prm"=>0 ),
+		"get_port_random" => array( "name"=>"network.port.randomize", "prm"=>0 ),
+		"get_port_range" => array( "name"=>"network.port.range", "prm"=>0 ),
+		"set_port_open"	=> array( "name"=>"network.listen.open", "prm"=>1 ),
+		"set_port_random" => array( "name"=>"network.port.randomize.set", "prm"=>1 ),
+		"set_port_range" => array( "name"=>"network.port.range.set", "prm"=>1 ),
+		"network.listen.port" => array( "name"=>"network.port", "prm"=>0 ),
+));
+}
 
-                        $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
-			if($req->run())
-			{
+    $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
+if($req->run()) {
 				if(!$req->fault)
 					$this->badXMLRPCVersion = false;
-				$req = new rXMLRPCRequest( array(
-					new rXMLRPCCommand("get_directory"),
-					new rXMLRPCCommand("get_session"),
-					new rXMLRPCCommand("system.library_version"),
-					new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
-					new rXMLRPCCommand("get_name"),
-					new rXMLRPCCommand("get_port_range"),
-					new rXMLRPCCommand("get_bind"),
-					new rXMLRPCCommand("get_ip"),
-					) );
-				if($req->success())
-				{
+				
+	$req = new rXMLRPCRequest( array(
+		new rXMLRPCCommand("get_directory"),
+		new rXMLRPCCommand("get_session"),
+		new rXMLRPCCommand("system.library_version"),
+		new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
+		new rXMLRPCCommand("get_name"),
+		new rXMLRPCCommand("get_port_range"),
+		new rXMLRPCCommand("get_bind"),
+		new rXMLRPCCommand("get_ip"),
+) );
+
+if($req->success()) {
 					$this->directory = $req->val[0];
   		        	        $this->session = $req->val[1];
 					$this->libVersion = $req->val[2];
@@ -388,14 +391,13 @@ if( $save ) {
 	}
 	public function patchDeprecatedCommand( $cmd, $name )
 	{
-		if((array_key_exists($name,$this->aliases) && $this->aliases[$name]["prm"]) || 
-			(($this->iVersion>=0x904) && (strpos($cmd->command,"group2.")===0)))
-			$cmd->addParameter("");
-	}
-	public function patchDeprecatedRequest($commands)
-	{
-		if($this->iVersion>=0x904)
-		{
+
+if((array_key_exists($name,$this->aliases) && $this->aliases[$name]["prm"]) || (($this->iVersion>=0x904) && (strpos($cmd->command,"group2.")===0)))
+	$cmd->addParameter("");
+}
+	
+public function patchDeprecatedRequest($commands) {
+if($this->iVersion>=0x904) {
 			foreach($commands as $cmd)
 			{
 				$prefix = '';
@@ -407,17 +409,13 @@ if( $save ) {
 				else
 				if(strpos($cmd->command, 'f.') === 0)
 					$prefix = ':f';
-				if(!empty($prefix) && 
-					(count($cmd->params)>1) && 
-					(substr($cmd->command, -10) !== '.multicall') &&
-					(strpos($cmd->params[0]->value, ':') === false) )
-				{
+if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !== '.multicall') && (strpos($cmd->params[0]->value, ':') === false) ) {
 					$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
 					array_splice( $cmd->params, 1, 1 );
-				}
-			}
-		}
-	}
+}
+}
+}
+}
 }
 
 ?>
