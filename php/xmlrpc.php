@@ -179,7 +179,11 @@ class rXMLRPCRequest
 			{
 				if($this->parseByTypes)
 				{
-if((preg_match_all("|<value><string>(.*)</string></value>|Us",$answer,$strings)!==false) && count($strings)>1 && (preg_match_all("|<value><i.>(.*)</i.></value>|Us",$answer,$this->i8s)!==false) && count($this->i8s)>1) {
+					if((preg_match_all("|<value><string>(.*)</string></value>|Us",$answer,$strings)!==false) &&
+						count($strings)>1 &&
+						(preg_match_all("|<value><i.>(.*)</i.></value>|Us",$answer,$this->i8s)!==false) &&
+						count($this->i8s)>1)
+					{
 						foreach($strings[1] as $str) 
 						{
 							$this->strings[] = html_entity_decode(

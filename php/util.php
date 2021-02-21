@@ -259,26 +259,23 @@ function isUserHavePermissionPrim($uid,$gids,$file,$flags)
 		}
 		$flags<<=3;
 		foreach( $gids as $ndx=>$gid)
-	        	if(($gid==$ss['gid']) &&
-				(($p & $flags) == $flags))
+if(($gid==$ss['gid']) && (($p & $flags) == $flags))
 				return(true);
 		$flags<<=3;
-		if(($uid==$ss['uid']) &&
-			(($p & $flags) == $flags))
+if(($uid==$ss['uid']) && (($p & $flags) == $flags))
 			return(true);
-	}
+}
 	return(false);
 }
 
 function isUserHavePermission($uid,$gids,$file,$flags)
 {
-	if($uid<=0)
-	{
+if($uid<=0) {
 	        if(($flags & 0x0001) && !is_dir($file))
 	                return(($ss=LFS::stat($file)) && ($ss['mode'] & 0x49));
 	        else
 			return(true);
-	}
+}
 	if(is_link($file))
 		$file = readlink($file);
 	if(isUserHavePermissionPrim($uid,$gids,$file,$flags))
