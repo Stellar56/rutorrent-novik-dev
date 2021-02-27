@@ -42,7 +42,7 @@ function getFlag($permissions,$pname,$fname)
 
 function getPluginInfo( $name, $permissions )
 {
-        $info = array( 
+    $info = array( 
 		'rtorrent.php.error'=>array(),
 		'rtorrent.external.error'=>array(),
 		'rtorrent.script.error'=>array(),
@@ -53,7 +53,7 @@ function getPluginInfo( $name, $permissions )
 		'php.version'=>0x50000,
 		'plugin.may_be_shutdowned'=>1,
 		'plugin.may_be_launched'=>1,
-		);
+);
 	$fname = "../plugins/".$name."/plugin.info";
 	if(is_readable($fname))
 	{
@@ -156,14 +156,14 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 			if(!array_key_exists($file,$userPermissions))
 				$userPermissions[$file] = true;
 			$info = getPluginInfo( $file, $permissions );
-
 if($info && $info["plugin.may_be_launched"] && (getFlag($permissions,$file,"enabled")=="user-defined") && !$userPermissions[$file])
 	$info = false;
 if(($info!==false) && ($info['php.version']<=$phpIVersion) && ($info['rtorrent.version']<=$theSettings->iVersion)) {
-if(count($info['rtorrent.external.error']))
-		eval( getPluginConf( $file ) );
-	$extError = false;
-foreach( $info['rtorrent.external.error'] as $external ) {
+				if(count($info['rtorrent.external.error']))
+					eval( getPluginConf( $file ) );
+				$extError = false;
+				foreach( $info['rtorrent.external.error'] as $external )
+				{
 					if(findEXE($external)==false)
 					{
 						$extError = true;

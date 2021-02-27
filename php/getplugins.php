@@ -1,7 +1,7 @@
 <?php
 
-require_once( "util.php" );
-require_once( "settings.php" );
+require_once("util.php");
+require_once("settings.php");
 
 function pluginsSort($a, $b)
 { 
@@ -17,17 +17,19 @@ function pluginsSort($a, $b)
 function getFlag($permissions,$pname,$fname)
 {
 	$ret = true;
-if(array_key_exists($pname,$permissions) && array_key_exists($fname,$permissions[$pname]))
-	$ret = $permissions[$pname][$fname];
-else
-if(array_key_exists("default",$permissions) && array_key_exists($fname,$permissions["default"]))
-	$ret = $permissions["default"][$fname];
-		return($ret);
+	if(array_key_exists($pname,$permissions) &&
+		array_key_exists($fname,$permissions[$pname]))
+		$ret = $permissions[$pname][$fname];
+	else
+	if(array_key_exists("default",$permissions) &&
+		array_key_exists($fname,$permissions["default"]))
+		$ret = $permissions["default"][$fname];
+	return($ret);
 }
 
 function getPluginInfo( $name, $permissions )
 {
-        $info = array( 
+    $info = array( 
 		'rtorrent.need'=>1, 
 		'rtorrent.remote'=>'ok',
 		'rtorrent.external.warning'=>array(),
@@ -123,20 +125,20 @@ if(is_readable($fname)) {
 						break;
 					}
 					case "version":
-					case "runlevel":
-					{
+					
+	case "runlevel":
+{
 						$info['plugin.'.$field] = floatval($value);
 						break;
-					}
-				}
-			}
-		}
-		$perms = 0;
-		if($permissions!==false)
-		{
-			if(!getFlag($permissions,$name,"enabled"))
+}
+}
+}
+}
+	$perms = 0;
+if($permissions!==false) {
+if(!getFlag($permissions,$name,"enabled"))
 				return(false);
-			$flags = array(
+	$flags = array(
 				"canChangeToolbar" 	=> 0x0001,
 				"canChangeMenu" 	=> 0x0002,
 				"canChangeOptions"	=> 0x0004,
@@ -146,41 +148,40 @@ if(is_readable($fname)) {
 				"canChangeCategory"	=> 0x0040,
 				"canBeShutdowned"	=> 0x0080,
 			/*	"canBeLaunched"		=> 0x0100, */
-				);
-			foreach($flags as $flagName=>$flagVal)
-				if(!getFlag($permissions,$name,$flagName))
-					$perms|=$flagVal;
+);
+	foreach($flags as $flagName=>$flagVal)
+if(!getFlag($permissions,$name,$flagName))
+	$perms|=$flagVal;
 
-			if(!$info["plugin.may_be_shutdowned"])
-				$perms|=$flags["canBeShutdowned"];
-
-		}
-		$info["perms"] = $perms;
-	}
+if(!$info["plugin.may_be_shutdowned"])
+	$perms|=$flags["canBeShutdowned"];
+}
+	$info["perms"] = $perms;
+}
 	return(array_key_exists("plugin.version",$info) ? $info : false);
 }
 
 function findRemoteEXE( $exe, $err, &$remoteRequests )
 {
 	$st = getSettingsPath().'/'.rand();
-	if(!array_key_exists($exe,$remoteRequests))
-	{
+if(!array_key_exists($exe,$remoteRequests)) {
 		$path=realpath(dirname('.'));
 		global $pathToExternals;
 		$cmd = array( "sh", addslash($path)."test.sh", $exe, $st );
-		if(isset($pathToExternals[$exe]) && !empty($pathToExternals[$exe]))
+if(isset($pathToExternals[$exe]) && !empty($pathToExternals[$exe]))
 			$cmd[] = $pathToExternals[$exe];
 		$req = new rXMLRPCRequest(new rXMLRPCCommand("execute", $cmd));
 		$req->run();
 		$remoteRequests[$exe] = array( "path"=>$st, "err"=>array() );
-	}
+}
 	$remoteRequests[$exe]["err"][] = $err;
 }
 
 function testRemoteRequests($remoteRequests)
 {
 	$ret = "";
-foreach($remoteRequests as $exe=>$info) {
+	foreach($remoteRequests as $exe=>$info)
+	{
 		$file = $info["path"].$exe.".found";
 if(!is_file($file)) {
 			foreach($info["err"] as $err)
@@ -196,22 +197,20 @@ $access = getConfFile('access.ini');
 if(!$access)
 	$access = "../conf/access.ini";
 $permissions = parse_ini_file($access);
-
-	$settingsFlags = array(
-		"showDownloadsPage" 	=> 0x0001,
-		"showConnectionPage" 	=> 0x0002,
-		"showBittorentPage"	=> 0x0004,
-		"showAdvancedPage"	=> 0x0008,
-		"showPluginsTab"	=> 0x0010,
-		"canChangeULRate"	=> 0x0020,
-		"canChangeDLRate"	=> 0x0040,
-		"canChangeTorrentProperties"	=> 0x0080,
-		"canAddTorrentsWithoutPath"	=> 0x0100,
-		"canAddTorrentsWithoutStarting"	=> 0x0200,
-		"canAddTorrentsWithResume"	=> 0x0400,	
-		"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
+$settingsFlags = array(
+	"showDownloadsPage" 	=> 0x0001,
+	"showConnectionPage" 	=> 0x0002,
+	"showBittorentPage"	=> 0x0004,
+	"showAdvancedPage"	=> 0x0008,
+	"showPluginsTab"	=> 0x0010,
+	"canChangeULRate"	=> 0x0020,
+	"canChangeDLRate"	=> 0x0040,
+	"canChangeTorrentProperties"	=> 0x0080,
+	"canAddTorrentsWithoutPath"	=> 0x0100,
+	"canAddTorrentsWithoutStarting"	=> 0x0200,
+	"canAddTorrentsWithResume"	=> 0x0400,	
+	"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
 );
-
 $perms = 0;
 foreach($settingsFlags as $flagName=>$flagVal)
 	if(!array_key_exists($flagName,$permissions) || $permissions[$flagName])
@@ -258,27 +257,23 @@ if($handle = opendir('../plugins'))
 				@chmod($up,$profileMask);
 				@chmod($st,$profileMask);
 				@chmod('./test.sh',$profileMask & 0755);
-	        	        if(PHP_USE_GZIP && (findEXE('gzip')===false))
-	        	        {
+if(PHP_USE_GZIP && (findEXE('gzip')===false)) {
 	        	        	@define('PHP_USE_GZIP', false);
 	        	        	$jResult.="noty(theUILang.gzipNotFound,'error');";
 	        	        }
-				if(PHP_INT_SIZE<=4)
-				{
-					if(findEXE('stat')===false)
+if(PHP_INT_SIZE<=4) {
+if(findEXE('stat')===false)
 						$jResult.="noty(theUILang.statNotFoundW,'error');";
                                         findRemoteEXE('stat',"noty(theUILang.statNotFound,'error');",$remoteRequests);
-				}
-	        		if(!@file_exists($up.'/.') || !is_readable($up) || !is_writable($up))
+}
+if(!@file_exists($up.'/.') || !is_readable($up) || !is_writable($up))
 					$jResult.="noty(theUILang.badUploadsPath+' (".$up.")','error');";
-	        		if(!@file_exists($st.'/.') || !is_readable($st) || !is_writable($st))
+if(!@file_exists($st.'/.') || !is_readable($st) || !is_writable($st))
         			        $jResult.="noty(theUILang.badSettingsPath+' (".$st.")','error');";
-				if(isLocalMode() && !$theSettings->idNotFound)
-				{
+if(isLocalMode() && !$theSettings->idNotFound) {
 					if($theSettings->uid<0)
 						$jResult.="noty(theUILang.cantObtainUser,'error');";
-					else
-					{
+else {
 						if(!isUserHavePermission($theSettings->uid,$theSettings->gid,$tempDirectory,0x0007))
 							$jResult.="noty(theUILang.badTempPath2+' (".$tempDirectory.")','error');";
 						if(!isUserHavePermission($theSettings->uid,$theSettings->gid,$up,0x0007))
@@ -287,12 +282,12 @@ if($handle = opendir('../plugins'))
 							$jResult.="noty(theUILang.badSettingsPath2+' (".$st.")','error');";
 						if(!isUserHavePermission($theSettings->uid,$theSettings->gid,'./test.sh',0x0005))
 							$jResult.="noty(theUILang.badTestPath+' (".realpath('./test.sh').")','error');";
-					}
-				}
-				if($theSettings->badXMLRPCVersion)
-					$jResult.="noty(theUILang.badXMLRPCVersion,'error');";
-			}
-		}
+}
+}
+if($theSettings->badXMLRPCVersion)
+	$jResult.="noty(theUILang.badXMLRPCVersion,'error');";
+}
+}
 		$plg = getConfFile('plugins.ini');
 		if(!$plg)
 			$plg = "../conf/plugins.ini";
@@ -317,53 +312,57 @@ if($handle = opendir('../plugins'))
 
 		$loadedExtensions = array_map("strtolower",get_loaded_extensions());
 
-		while(false !== ($file = readdir($handle)))
-		{
-			if($file != "." && $file != ".." && is_dir('../plugins/'.$file))
-			{
+while(false !== ($file = readdir($handle))) {
+if($file != "." && $file != ".." && is_dir('../plugins/'.$file)) {
 				if(!array_key_exists($file,$userPermissions))
 					$userPermissions[$file] = true;
 				$info = getPluginInfo( $file, $permissions );
 if($info) {
 if($info["plugin.may_be_launched"] && getFlag($permissions,$file,"enabled")=="user-defined") {
-	$info["perms"] |= $canBeLaunched;
-if(!$userPermissions[$file]) {
+					        $info["perms"] |= $canBeLaunched;
+						if(!$userPermissions[$file])
+						{
 							$info["perms"] |= $disabledByUser;
 							$disabled[$file] = $info;
 							$info = false;
-}
-} else
-	$info["perms"] |= $cantBeShutdowned;
-}
-
-if($info!==false) {
-if(!$theSettings->linkExist && $info["rtorrent.need"]) {
-	$disabled[$file] = $info;
-continue;
-}
-
-if($info['php.version']>$phpIVersion) {
-	$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
-	$disabled[$file] = $info;
-continue;
-}
-	$extError = false;
+						}
+					}
+					else
+						$info["perms"] |= $cantBeShutdowned;
+				}
+				if($info!==false)
+				{
+				        if(!$theSettings->linkExist && $info["rtorrent.need"])
+				        {
+					        $disabled[$file] = $info;
+						continue;
+					}
+					if($info['php.version']>$phpIVersion)
+					{
+						$jResult.="noty('".$file.": '+theUILang.badPHPVersion+' '+'".$info['php.version.readable']."'+'.','error');";
+					        $disabled[$file] = $info;
+						continue;
+					}
+					$extError = false;
 
 					foreach( $info['php.extensions.error'] as $extension )
-if(!in_array( $extension, $loadedExtensions )) {
+						if(!in_array( $extension, $loadedExtensions ))
+						{
 							$jResult.="noty('".$file.": '+theUILang.phpExtensionNotFoundError+' ('+'".$extension."'+').','error');";
 							$extError = true;
-}
-if($extError) {
+						}
+					if($extError)
+					{
 					        $disabled[$file] = $info;
-continue;
-}
+						continue;
+					}
 					if(count($info['web.external.error']) || 
 						count($info['web.external.warning']) ||
 						count($info['rtorrent.external.error']) || 
 						count($info['rtorrent.external.warning']))
 						eval( getPluginConf( $file ) );
-foreach( $info['web.external.error'] as $external ) {
+					foreach( $info['web.external.error'] as $external )
+					{
 						if(findEXE($external)==false)
 						{
 							$jResult.="noty('".$file.": '+theUILang.webExternalNotFoundError+' ('+'".$external."'+').','error');";

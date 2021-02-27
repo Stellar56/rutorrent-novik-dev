@@ -15,9 +15,7 @@ class rCloudflare
 
 	protected function is_cloudflare_challenge()
 	{
-		return( ($this->client->status == 503 || $this->client->status == 429) &&
-			(stripos( $this->client->get_header("Server"), "cloudflare" ) === 0) &&
-			$this->client->results 
+		return( ($this->client->status == 503 || $this->client->status == 429) && (stripos( $this->client->get_header("Server"), "cloudflare" ) === 0) && $this->client->results 
 //			&&
 //			(stripos( $this->client->results, "jschl_vc" ) !== false) &&
 //			(stripos( $this->client->results, "jschl_answer" ) !== false) 
@@ -55,18 +53,15 @@ class rCloudflare
 			$code = escapeshellarg(getExternal('python'))." -c ".
 				escapeshellarg("import cloudscraper\nimport json\ntokens, user_agent = cloudscraper.get_tokens({$url}{$proxies}{$recaptcha})\nprint(json.dumps([tokens,user_agent]))");
 			$data = `{$code}`;
-			if($data &&
-				($data = json_decode($data,true)) &&
-				is_array($data) &&
-				count($data) > 1 &&
-				!empty($data[0]))
-			{
+if($data && ($data = json_decode($data,true)) && is_array($data) && count($data) > 1 && !empty($data[0])) {
 				$this->client->setcookies();
 				$this->client->cookies = array_merge($this->client->cookies,$data[0]);
 				$this->client->agent = $data[1];
 				$ret = true;
-			}
-		}
-		return($ret);
-	}
 }
+}
+		return($ret);
+}
+}
+
+?>

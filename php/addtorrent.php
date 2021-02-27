@@ -5,7 +5,7 @@ require_once('rtorrent.php');
 set_time_limit(0);
 
 if(isset($_REQUEST['result'])) {
-if(isset($_REQUEST['json']))
+	if(isset($_REQUEST['json']))
 		cachedEcho( '{ "result" : "'.$_REQUEST['result'][0].'" }',"application/json");
 else {
 	$js = '';
@@ -18,8 +18,8 @@ else {
 } else {
 	$uploaded_files = array();
 	$label = null;
-if(isset($_REQUEST['label']))
-	$label = trim($_REQUEST['label']);
+	if(isset($_REQUEST['label']))
+		$label = trim($_REQUEST['label']);
 	$dir_edit = null;
 if(isset($_REQUEST['dir_edit'])) {
 	$dir_edit = trim($_REQUEST['dir_edit']);
@@ -30,7 +30,8 @@ if((strlen($dir_edit)>0) && !rTorrentSettings::get()->correctDirectory($dir_edit
 if(empty($uploaded_files)) {
 if(isset($_FILES['torrent_file'])) {
 if( is_array($_FILES['torrent_file']['name']) ) {
-for ($i = 0; $i<count($_FILES['torrent_file']['name']); ++$i) {
+for ($i = 0; $i<count($_FILES['torrent_file']['name']); ++$i)
+{
 	$files[] = array(
         'name' => $_FILES['torrent_file']['name'][$i],
         'tmp_name' => $_FILES['torrent_file']['tmp_name'][$i],
@@ -100,10 +101,10 @@ if(rTorrent::sendTorrent($torrent, !isset($_REQUEST['torrents_start_stopped']), 
 if( isset($file['name']) )
 	$location.=('name[]='.rawurlencode($file['name']).'&');
 }
-			header("HTTP/1.0 302 Moved Temporarily");
+		header("HTTP/1.0 302 Moved Temporarily");
 if(isset($_REQUEST['json']))
 	$location.='json=1';
-			header($location);
+		header($location);
 }
 
 ?>

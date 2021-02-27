@@ -9,7 +9,7 @@
  * http://www.gnu.org/licenses/gpl.html.
  */
 
-require_once( 'util.php' );
+require_once('util.php');
 
 class Torrent
 {
@@ -62,7 +62,7 @@ class Torrent
 		}
 	}
 
-	protected function notify_log( $msg )
+	protected function notify_log($msg)
 	{
 		if(is_callable($this->log_callback))
 		{
@@ -515,15 +515,14 @@ class Torrent
 			case 0:
 				return false;
 			default:
-				
-	return(array(
-		'files'         => $info_files,
-		'name'          => end( $path ),
-		'piece length'  => $piece_length,
-		'pieces'        => $pieces . ( $piece ? self::pack( $piece ) : '' )
-));
-}
-}
+				return(array(
+					'files'         => $info_files,
+					'name'          => end( $path ),
+					'piece length'  => $piece_length,
+					'pieces'        => $pieces . ( $piece ? self::pack( $piece ) : '' )
+					));
+        	}
+    	}
 
 	/** Build torrent info from folder content
 	 * @param string folder path
