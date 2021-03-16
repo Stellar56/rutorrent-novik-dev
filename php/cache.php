@@ -1,5 +1,5 @@
 <?php
-require_once('util.php');
+require_once( 'util.php' );
 
 class rCache
 {
@@ -82,16 +82,21 @@ class rCache
 			}
 			else
 			{
-if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($tmp->version)) || (isset($tmp->version) && ($tmp->version==$rss->version)))) {
+				if(($tmp!==false) && 
+					(!isset($rss->version) || 
+					(isset($rss->version) && !isset($tmp->version)) ||
+					(isset($tmp->version) && ($tmp->version==$rss->version))))
+				{
 				        $rss = $tmp;
 					$rss->modified = filemtime($fname);
 					$ret = true;
-} else
+				}
+				else
 					$ret = false;
-}
-}
+			}
+        	}
 		return($ret);
-}
+	}
 	public function remove( $rss )
 	{
 		return(@unlink($this->getName($rss)));

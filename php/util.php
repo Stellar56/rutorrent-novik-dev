@@ -21,19 +21,21 @@ function stripSlashesFromArray(&$arr)
 
 function fix_magic_quotes_gpc() 
 {
-if(version_compare(phpversion(), '5.4', '<')) {
-if(function_exists('ini_set')) {
+	if(version_compare(phpversion(), '5.4', '<'))
+	{
+		if(function_exists('ini_set'))
+		{
 			ini_set('magic_quotes_runtime', 0);
 			ini_set('magic_quotes_sybase', 0);
-}
-
-if(get_magic_quotes_gpc()) {
+		}
+		if(get_magic_quotes_gpc())
+		{
 			stripSlashesFromArray($_POST);
 			stripSlashesFromArray($_GET);
 			stripSlashesFromArray($_COOKIE);
 			stripSlashesFromArray($_REQUEST);
-}
-}
+		}
+	}
 }
 
 fix_magic_quotes_gpc();
@@ -49,25 +51,28 @@ function isInvalidUTF8($str)
 	for($i = 0; $i < $len; $i++)
 	{
 		$c = ord($str[$i]);
-if($c > 128) {
-if(($c > 247)) return(true);
+		if($c > 128) 
+		{
+			if(($c > 247)) return(true);
 			elseif($c > 239) $bytes = 4;
 			elseif($c > 223) $bytes = 3;
 			elseif($c > 191) $bytes = 2;
 			else return(true);
 			if(($i + $bytes) > $len) return(true);
-while ($bytes > 1) {
+			while ($bytes > 1) 
+			{
 				$i++;
 				$b = ord($str[$i]);
 				if($b < 128 || $b > 191) return(true);
 				$bytes--;
-}
-}
-}
+			}
+		}
+	}
 	return(false);
 }
 
-function win2utf($str) {
+function win2utf($str) 
+{
 	$outstr='';
 	$recode=array(
 		0x0402,0x0403,0x201A,0x0453,0x201E,0x2026,0x2020,0x2021,
@@ -87,22 +92,23 @@ function win2utf($str) {
 		0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
 		0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F
 );
+	
 	$and=0x3F;
 for($i=0;$i<strlen($str);$i++) {
 		$octet=array();
 		if(ord($str[$i])<0x80) 
 			$strhex=ord($str[$i]);
-else
+		else
 			$strhex=$recode[ord($str[$i])-128];
 		if($strhex<0x0080)
 			$octet[0]=0x0;
-elseif($strhex<0x0800)
-{
+		elseif($strhex<0x0800)
+		{
 			$octet[0]=0xC0;
 			$octet[1]=0x80;
-} 
-elseif($strhex<0x10000) 
-{
+		} 
+		elseif($strhex<0x10000) 
+		{
 			$octet[0]=0xE0;
 			$octet[1]=0x80;
 			$octet[2]=0x80;
@@ -121,16 +127,18 @@ elseif($strhex<0x10000)
 			$octet[2]=0x80;
 			$octet[3]=0x80;
 			$octet[4]=0x80;
-} else {
+		} 
+		else 
+		{
 			$octet[0]=0xFC;
 			$octet[1]=0x80;
 			$octet[2]=0x80;
 			$octet[3]=0x80;
 			$octet[4]=0x80;
 			$octet[5]=0x80;
-}
-
-for($j=(count($octet)-1);$j>=1;$j--) {
+	    	}
+	    	for($j=(count($octet)-1);$j>=1;$j--) 
+		{
 			$octet[$j]=$octet[$j] + ($strhex & $and);
 			$strhex=$strhex>>6;
 		}
@@ -284,7 +292,7 @@ function isUserHavePermission($uid,$gids,$file,$flags)
 	return(false);
 }
 
-function addslash($str)
+function addslash( $str )
 {
 	$len = strlen( $str );
 	return( (($len == 0) || ($str[$len-1] == '/')) ? $str : $str.'/' );
@@ -418,14 +426,14 @@ function getTempFilename($purpose = '', $extension = null)
 {
 	do
 	{
-	$fname = uniqid(getTempDirectory().implode( '-', array_filter(array(
+		$fname = uniqid(getTempDirectory().implode( '-', array_filter(array
+		(
 			"rutorrent",
 			$purpose,
 			getLogin(),
 			getmypid()
 		))),true).( is_null($extension) ? '' : ".$extension" );
-}
-while(file_exists($fname));	// this is no guarantee, of course...
+	} while(file_exists($fname));	// this is no guarantee, of course...
 	return($fname);
 }
 
@@ -458,32 +466,34 @@ function findEXE( $exe )
 function cachedEcho( $content, $type = null, $cacheable = false, $exit = true )
 {
 	header("X-Server-Timestamp: ".time());
-if($cacheable && isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD']=='GET')) {
+	if($cacheable && isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD']=='GET'))
+	{
 		$etag = '"'.strtoupper(dechex(crc32($content))).'"';
 		header('Expires: ');
 		header('Pragma: ');
 		header('Cache-Control: ');
-if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
-		header('HTTP/1.0 304 Not Modified');
+		if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)
+		{
+			header('HTTP/1.0 304 Not Modified');
 			return;
-}
+		}
 		header('Etag: '.$etag);
-}
-
-if(!is_null($type))
+	}
+	if(!is_null($type))
 		header("Content-Type: ".$type."; charset=UTF-8");
 	$len = strlen($content);
 	if(ini_get("zlib.output_compression") && ($len<2048))
 		ini_set("zlib.output_compression",false);
-if(!ini_get("zlib.output_compression")) {
-if(PHP_USE_GZIP && isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-if( strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false ) 
+	if(!ini_get("zlib.output_compression"))
+	{
+	        if(PHP_USE_GZIP && isset($_SERVER['HTTP_ACCEPT_ENCODING']))
+	        {
+		        if( strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip') !== false ) 
 		        	$encoding = 'x-gzip'; 
-else
-	
-if( strpos($_SERVER['HTTP_ACCEPT_ENCODING'],'gzip') !== false )
-	$encoding = 'gzip'; 
-if($encoding && ($len>=2048)) {
+			else if( strpos($_SERVER['HTTP_ACCEPT_ENCODING'],'gzip') !== false )
+		        	$encoding = 'gzip'; 
+			if($encoding && ($len>=2048))
+			{
 				$gzip = getExternal('gzip');
 				header('Content-Encoding: '.$encoding); 
 				$randName = getTempFilename('answer');
@@ -491,14 +501,13 @@ if($encoding && ($len>=2048)) {
 				passthru( $gzip." -".PHP_GZIP_LEVEL." -c < ".$randName );
 				unlink($randName);
 				return;
-}
-}
+			}
+		}
 		header("Content-Length: ".$len);
-}
-
-if($exit)
+	}
+	if($exit)
 		exit($content);
-else
+	else
 		echo($content);
 }
 
@@ -511,7 +520,7 @@ function makeDirectory( $dirs, $perms = null )
 	if(is_array($dirs))
 		foreach($dirs as $dir)
 			(file_exists(addslash($dir).'.') && @chmod($dir,$perms)) || @mkdir($dir,$perms,true);
-else
+	else
 		(file_exists(addslash($dirs).'.') && @chmod($dirs,$perms)) || @mkdir($dirs,$perms,true);
 	@umask($oldMask);
 } 
@@ -521,10 +530,11 @@ function deleteDirectory( $dir )
 {
 	$dir = addslash($dir);
 	$files = array_diff(scandir($dir), array('.','..'));
-foreach($files as $file) {
+	foreach($files as $file) 
+	{
 		$path = $dir.$file;
 		is_dir($path) ? deleteDirectory($path) : unlink($path);
-}
+    	}
 	return(rmdir($dir));
 }
 
@@ -553,27 +563,35 @@ function sendFile( $filename, $contentType = null, $nameToSent = null, $mustExit
 				$nameToSent = rawurlencode($nameToSent);
 			header('Content-Disposition: attachment; filename="'.$nameToSent.'"');
 	
-if($mustExit && $canUseXSendFile && function_exists('apache_get_modules') && in_array('mod_xsendfile', apache_get_modules())) { 
-			header("X-Sendfile: ".$filename); 
-} else {
-			header('Cache-Control: ');
-			header('Expires: ');
-			header('Pragma: ');
-			header('Etag: '.$etag);
-			header('Last-Modified: ' . date('r', $stat['mtime']));
+			if($mustExit &&
+				$canUseXSendFile &&
+				function_exists('apache_get_modules') && 
+				in_array('mod_xsendfile', apache_get_modules()))
+			{ 
+				header("X-Sendfile: ".$filename); 
+			}
+			else
+			{
+				header('Cache-Control: ');
+				header('Expires: ');
+				header('Pragma: ');
+				header('Etag: '.$etag);
+				header('Last-Modified: ' . date('r', $stat['mtime']));
 				set_time_limit(0);
 				ignore_user_abort(!$mustExit);
 				header('Accept-Ranges: bytes');
 				header('Content-Transfer-Encoding: binary');
 				header('Content-Description: File Transfer');
 
-if(ob_get_level()) 
+				if(ob_get_level()) 
 					while(@ob_end_clean());
 
 				$begin = 0;
 				$end = $stat['size'];
-if(isset($_SERVER['HTTP_RANGE'])) { 
-if(preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches)) { 
+				if(isset($_SERVER['HTTP_RANGE']))
+  				{ 
+  					if(preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches))
+    					{ 
     						$begin=intval($matches[0]);
 						if(!empty($matches[1]))
 							$end=intval($matches[1]);

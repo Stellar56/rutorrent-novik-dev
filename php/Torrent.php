@@ -9,7 +9,7 @@
  * http://www.gnu.org/licenses/gpl.html.
  */
 
-require_once('util.php');
+require_once( 'util.php' );
 
 class Torrent
 {
@@ -62,7 +62,7 @@ class Torrent
 		}
 	}
 
-	protected function notify_log($msg)
+	protected function notify_log( $msg )
 	{
 		if(is_callable($this->log_callback))
 		{

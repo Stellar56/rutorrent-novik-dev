@@ -1,7 +1,7 @@
 <?php
 
-require_once('xmlrpc.php');
-require_once('cache.php');
+require_once( 'xmlrpc.php' );
+require_once( 'cache.php');
 
 class rTorrentSettings
 {
@@ -41,7 +41,7 @@ class rTorrentSettings
 		"ratio.max.set",
 		"ratio.upload",
 		"ratio.upload.set",
-);
+	);
 
 	private function __construct()
     	{
@@ -180,13 +180,14 @@ class rTorrentSettings
 			self::$theSettings = new rTorrentSettings();
 			if($create)
 				self::$theSettings->obtain();
-else {
+			else
+			{
 				$cache = new rCache();
 				$cache->get(self::$theSettings);
-}
-}
+			}
+		}
 		return(self::$theSettings);
-}
+	}
 	public function obtain()
 	{
 		$req = new rXMLRPCRequest( new rXMLRPCCommand("system.client_version") );
@@ -201,13 +202,14 @@ else {
 
 			if($this->iVersion>0x806)
 			{
-	$this->aliases = array(
-		"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
-		"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
-);
-}
-
-if($this->iVersion==0x808) {
+				$this->aliases = array
+				(
+					"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
+					"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
+				);
+			}
+			if($this->iVersion==0x808)
+			{
 				$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
 				$req->important = false;
 				if($req->success())
@@ -229,7 +231,8 @@ if($this->iVersion==0x808) {
 
 			if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bind branch of rtorrent
 			{
-	$this->aliases = array_merge($this->aliases,array(
+				$this->aliases = array_merge($this->aliases,array
+				(
 					"get_port_open"	=> array( "name"=>"network.listen.is_open", "prm"=>0 ),
 					"get_port_random" => array( "name"=>"network.port.randomize", "prm"=>0 ),
 					"get_port_range" => array( "name"=>"network.port.range", "prm"=>0 ),
@@ -237,14 +240,15 @@ if($this->iVersion==0x808) {
 					"set_port_random" => array( "name"=>"network.port.randomize.set", "prm"=>1 ),
 					"set_port_range" => array( "name"=>"network.port.range.set", "prm"=>1 ),
 					"network.listen.port" => array( "name"=>"network.port", "prm"=>0 ),
-));
-}
+				));
+			}
 
-    $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
-if($req->run()) {
+                        $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
+			if($req->run())
+			{
 				if(!$req->fault)
 					$this->badXMLRPCVersion = false;
-	$req = new rXMLRPCRequest( array(
+				$req = new rXMLRPCRequest( array(
 					new rXMLRPCCommand("get_directory"),
 					new rXMLRPCCommand("get_session"),
 					new rXMLRPCCommand("system.library_version"),
@@ -253,7 +257,7 @@ if($req->run()) {
 					new rXMLRPCCommand("get_port_range"),
 					new rXMLRPCCommand("get_bind"),
 					new rXMLRPCCommand("get_ip"),
-) );
+					) );
 				if($req->success())
 				{
 					$this->directory = $req->val[0];
@@ -265,15 +269,18 @@ if($req->run()) {
 					$this->bind = $req->val[6];
 					$this->ip = $req->val[7];
 
-if($this->iVersion>=0x809) {
+					if($this->iVersion>=0x809)
+					{
 						$req = new rXMLRPCRequest( new rXMLRPCCommand("network.listen.port") );
 						$req->important = false;
-if($req->success())
+						if($req->success())
 							$this->port = intval($req->val[0]);
-}
+					}
 
-if(isLocalMode()) {
-if(!empty($this->session)) {
+					if(isLocalMode())
+					{
+	                                        if(!empty($this->session))
+	                                        {
 							$this->started = @filemtime($this->session.'/rtorrent.lock');
 							if($this->started===false)
 								$this->started = 0;
@@ -289,7 +296,8 @@ if(!empty($this->session)) {
 							if(!empty($this->directory) &&
 								($this->directory[0]=='~'))
 								$this->directory = $this->home.substr($this->directory,1);	
-} else
+						}
+						else
 							$this->idNotFound = true;
 					}
 					$this->store();
@@ -405,13 +413,17 @@ if(!empty($this->session)) {
 				else
 				if(strpos($cmd->command, 'f.') === 0)
 					$prefix = ':f';
-if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !== '.multicall') && (strpos($cmd->params[0]->value, ':') === false) ) {
+				if(!empty($prefix) && 
+					(count($cmd->params)>1) && 
+					(substr($cmd->command, -10) !== '.multicall') &&
+					(strpos($cmd->params[0]->value, ':') === false) )
+				{
 					$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
 					array_splice( $cmd->params, 1, 1 );
-}
-}
-}
-}
+				}
+			}
+		}
+	}
 }
 
 ?>
