@@ -1,7 +1,7 @@
 <?php
 
-require_once("xmlrpc.php");
-require_once('settings.php');
+require_once( "xmlrpc.php" );
+require_once( 'settings.php' );
 
 define('FLAG_CANT_SHUTDOWN',	0x0080);
 define('FLAG_CAN_CHANGE_LAUNCH',0x0100);
@@ -69,5 +69,3 @@ if(isset($HTTP_RAW_POST_DATA))
 }
 
 cachedEcho($jResult,"application/javascript");
-
-?>

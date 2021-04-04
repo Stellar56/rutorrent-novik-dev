@@ -179,16 +179,23 @@ class rXMLRPCRequest
 			{
 				if($this->parseByTypes)
 				{
-if((preg_match_all("|<value><string>(.*)</string></value>|Us",$answer,$strings)!==false) && count($strings)>1 && (preg_match_all("|<value><i.>(.*)</i.></value>|Us",$answer,$this->i8s)!==false) && count($this->i8s)>1) {
-foreach($strings[1] as $str) {
+					if((preg_match_all("|<value><string>(.*)</string></value>|Us",$answer,$strings)!==false) &&
+						count($strings)>1 &&
+						(preg_match_all("|<value><i.>(.*)</i.></value>|Us",$answer,$this->i8s)!==false) &&
+						count($this->i8s)>1)
+					{
+						foreach($strings[1] as $str) 
+						{
 							$this->strings[] = html_entity_decode(
 								str_replace( array("\\","\""), array("\\\\","\\\""), $str ),
 	 							ENT_COMPAT,"UTF-8");
-}
+						}
 						$this->i8s = $this->i8s[1];
 						$ret = true;
-}
-} else {
+					}
+				}
+				else
+				{
 					if((preg_match_all("/<value>(<string>|<i.>)(.*)(<\/string>|<\/i.>)<\/value>/Us",$answer,$response)!==false) &&
 						count($response)>2)
 					{
@@ -230,5 +237,3 @@ function getCmd($cmd)
 {
 	return(rTorrentSettings::get()->getCommand($cmd));
 }
-
-?>

@@ -213,30 +213,22 @@ if( $theSettings->linkExist && ($handle = opendir('../plugins')))
 				$php = "../plugins/".$file."/init.php";
 				if(!is_readable($php))
 					$php = NULL;
-	$init[] = array(
-		"php" => $php,
-		"name" => $file,
-		"level" => $info["plugin.runlevel"],
-		"deps"=>$info["plugin.dependencies"]
-);
-	$names[] = $file;
-} 
-}
-}
+				$init[] = array( "php" => $php, "name" => $file, "level" => $info["plugin.runlevel"], "deps"=>$info["plugin.dependencies"] );
+				$names[] = $file;
+			} 
+		}
+	}
 	closedir($handle);
 	usort($init,"pluginsSort");
 	$do_diagnostic = false;
 	$jResult = '';
 	$jEnd = '';
-	$pInfo = array(
-	"perms" => 0x0100
-);
+	$pInfo = array( "perms" => 0x0100 );
+	foreach($init as $plugin)
+	{
+		if($plugin["php"] && !count(array_diff( $plugin["deps"], $names )))
+			require_once( $plugin["php"] );
 
-foreach($init as $plugin) {
-if($plugin["php"] && !count(array_diff( $plugin["deps"], $names )))
-require_once($plugin["php"]);
-}
+	}
 	$theSettings->store();
 }
-
-?>

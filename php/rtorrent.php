@@ -208,5 +208,3 @@ class rTorrent
 		return($directory);
 	}
 }
-
-?>

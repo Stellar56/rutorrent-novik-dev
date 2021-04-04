@@ -17,12 +17,10 @@ function pluginsSort($a, $b)
 function getFlag($permissions,$pname,$fname)
 {
 	$ret = true;
-	if(array_key_exists($pname,$permissions) &&
-		array_key_exists($fname,$permissions[$pname]))
+if(array_key_exists($pname,$permissions) && array_key_exists($fname,$permissions[$pname]))
 		$ret = $permissions[$pname][$fname];
 	else
-	if(array_key_exists("default",$permissions) &&
-		array_key_exists($fname,$permissions["default"]))
+if(array_key_exists("default",$permissions) && array_key_exists($fname,$permissions["default"]))
 		$ret = $permissions["default"][$fname];
 	return($ret);
 }
@@ -134,9 +132,9 @@ function getPluginInfo( $name, $permissions )
 			}
 		}
 		$perms = 0;
-		if($permissions!==false)
-		{
-			if(!getFlag($permissions,$name,"enabled"))
+		
+if($permissions!==false) {
+if(!getFlag($permissions,$name,"enabled"))
 				return(false);
 			$flags = array(
 				"canChangeToolbar" 	=> 0x0001,
@@ -201,6 +199,7 @@ $access = getConfFile('access.ini');
 if(!$access)
 	$access = "../conf/access.ini";
 $permissions = parse_ini_file($access);
+
 $settingsFlags = array(
 	"showDownloadsPage" 	=> 0x0001,
 	"showConnectionPage" 	=> 0x0002,
@@ -215,6 +214,7 @@ $settingsFlags = array(
 	"canAddTorrentsWithResume"	=> 0x0400,	
 	"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
 );
+
 $perms = 0;
 foreach($settingsFlags as $flagName=>$flagVal)
 	if(!array_key_exists($flagName,$permissions) || $permissions[$flagName])
