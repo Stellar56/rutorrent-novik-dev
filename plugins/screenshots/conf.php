@@ -5,7 +5,8 @@ if(empty($pathToExternals['ffmpeg']))	// May be path already defined?
 	$pathToExternals['ffmpeg'] = '';// Something like /usr/bin/ffmpeg. If empty, will be found in PATH.
 }
 
-$extensions = array(
+$extensions = array
+(
 	"3g2","3gp","4xm","iff","iss","mtv","roq","a64","ac3","anm","apc","asf","avi","avm2","avs","bethsoftvid",
 	"bink","c93","cavsvideo","cdg","dirac","dnxhd","dsicin","dts","dv","dv1394","dvd","ea","eac3","ffm","film_cpk",
 	"filmstrip","flic","flv","gxf","h261","h263","h264","idcin","image2","image2pipe",
@@ -15,5 +16,3 @@ $extensions = array(
 	"smk","svcd","swf","vcd","video4linux","video4linux2","vob","webm","wmv",
 	"mkv","ogm","mpg","mpv","m1v","m2v","mp2","qt","rmvb","dat","ts"
 );
-
-?>

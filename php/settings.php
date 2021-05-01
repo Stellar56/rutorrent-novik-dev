@@ -158,13 +158,15 @@ class rTorrentSettings
 				{
 					require_once( $file );
 					$func = $hook['name'].'Hooks::On'.$ename;
-if(is_callable( $func ) && (call_user_func_array($func,$prm)==true)) {
+					if(is_callable( $func ) && 
+						(call_user_func_array($func,$prm)==true))
+					{
 						break;
-}
-}
-}
-}
-}
+					}
+				}
+			}
+		}
+	}
 
 	public function store()
 	{
@@ -178,11 +180,12 @@ if(is_callable( $func ) && (call_user_func_array($func,$prm)==true)) {
 			self::$theSettings = new rTorrentSettings();
 			if($create)
 				self::$theSettings->obtain();
-else {
+			else
+			{
 				$cache = new rCache();
 				$cache->get(self::$theSettings);
-}
-}
+			}
+		}
 		return(self::$theSettings);
 	}
 	public function obtain()
@@ -199,43 +202,46 @@ else {
 
 			if($this->iVersion>0x806)
 			{
-	$this->aliases = array(
-		"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
-		"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
-);
-}
-
-if($this->iVersion==0x808) {
+				$this->aliases = array
+				(
+					"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
+					"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
+				);
+			}
+			if($this->iVersion==0x808)
+			{
 				$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
 				$req->important = false;
-if($req->success())
+				if($req->success())
 					$this->iVersion=0x809;
-}
-
-if($this->iVersion>=0x904) {
+			}
+			if($this->iVersion>=0x904)
+			{
 				require_once( 'methods-0.9.4.php' );
-}
+			}
 			
 			$this->apiVersion = 0;
-if($this->iVersion>=0x901) {
+			if($this->iVersion>=0x901)
+			{
 				$req = new rXMLRPCRequest( new rXMLRPCCommand("system.api_version") );
 				$req->important = false;
 				if($req->success())
 					$this->apiVersion = $req->val[0];
-}
+			}
 
-if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bind branch of rtorrent
-{
-	$this->aliases = array_merge($this->aliases,array(
-		"get_port_open"	=> array( "name"=>"network.listen.is_open", "prm"=>0 ),
-		"get_port_random" => array( "name"=>"network.port.randomize", "prm"=>0 ),
-		"get_port_range" => array( "name"=>"network.port.range", "prm"=>0 ),
-		"set_port_open"	=> array( "name"=>"network.listen.open", "prm"=>1 ),
-		"set_port_random" => array( "name"=>"network.port.randomize.set", "prm"=>1 ),
-		"set_port_range" => array( "name"=>"network.port.range.set", "prm"=>1 ),
-		"network.listen.port" => array( "name"=>"network.port", "prm"=>0 ),
-));
-}
+			if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bind branch of rtorrent
+			{
+				$this->aliases = array_merge($this->aliases,array
+				(
+					"get_port_open"	=> array( "name"=>"network.listen.is_open", "prm"=>0 ),
+					"get_port_random" => array( "name"=>"network.port.randomize", "prm"=>0 ),
+					"get_port_range" => array( "name"=>"network.port.range", "prm"=>0 ),
+					"set_port_open"	=> array( "name"=>"network.listen.open", "prm"=>1 ),
+					"set_port_random" => array( "name"=>"network.port.randomize.set", "prm"=>1 ),
+					"set_port_range" => array( "name"=>"network.port.range.set", "prm"=>1 ),
+					"network.listen.port" => array( "name"=>"network.port", "prm"=>0 ),
+				));
+			}
 
                         $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
 			if($req->run())
@@ -407,7 +413,11 @@ if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bi
 				else
 				if(strpos($cmd->command, 'f.') === 0)
 					$prefix = ':f';
-if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !== '.multicall') && (strpos($cmd->params[0]->value, ':') === false) ) {
+				if(!empty($prefix) && 
+					(count($cmd->params)>1) && 
+					(substr($cmd->command, -10) !== '.multicall') &&
+					(strpos($cmd->params[0]->value, ':') === false) )
+				{
 					$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
 					array_splice( $cmd->params, 1, 1 );
 				}
@@ -415,5 +425,3 @@ if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !==
 		}
 	}
 }
-
-?>

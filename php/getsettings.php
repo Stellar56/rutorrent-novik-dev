@@ -18,5 +18,3 @@ if($fo!==false)
 }
 
 cachedEcho($s,"application/json",true);
-
-?>

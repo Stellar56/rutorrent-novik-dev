@@ -167,7 +167,7 @@ if(isset($_REQUEST['cmd']))
 		'piece_size'=>$_REQUEST['piece_size'],
 		'private'=>$_REQUEST['private'],
 		'hybrid'=>$_REQUEST['hybrid']
-) );
+));
 	$commands = array();
 
 					$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
