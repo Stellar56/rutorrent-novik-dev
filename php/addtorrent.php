@@ -39,12 +39,14 @@ else
 			{
 				for ($i = 0; $i<count($_FILES['torrent_file']['name']); ++$i)
 				{
-	$files[] = array(
-        'name' => $_FILES['torrent_file']['name'][$i],
-        'tmp_name' => $_FILES['torrent_file']['tmp_name'][$i],
-);
-}
-} else
+		                        $files[] = array
+        		                (
+                		            'name' => $_FILES['torrent_file']['name'][$i],
+                        		    'tmp_name' => $_FILES['torrent_file']['tmp_name'][$i],
+		                        );
+        	        	}
+			}
+			else
 				$files[] = $_FILES['torrent_file'];
 			foreach( $files as $file )
 			{
@@ -132,5 +134,3 @@ else
 		$location.='json=1';
 	header($location);
 }
-
-?>
