@@ -155,20 +155,21 @@ if(isset($_REQUEST['cmd']))
 						$hybrid = TRUE;
 					if($useExternal===false)
 						$useExternal = "inner";
-	$task = new rTask( array(
-		'arg' => getFileName($path_edit),
-		'requester'=>'create',
-		'name'=>'create',
-		'path_edit'=>$_REQUEST['path_edit'],
-		'trackers'=>$_REQUEST['trackers'],
-		'comment'=>$_REQUEST['comment'],
-		'source'=>$_REQUEST['source'],
-		'start_seeding'=>$_REQUEST['start_seeding'],
-		'piece_size'=>$_REQUEST['piece_size'],
-		'private'=>$_REQUEST['private'],
-		'hybrid'=>$_REQUEST['hybrid']
-) );
-	$commands = array();
+					$task = new rTask( array
+					(
+						'arg' => getFileName($path_edit),
+						'requester'=>'create',
+						'name'=>'create',
+						'path_edit'=>$_REQUEST['path_edit'],
+						'trackers'=>$_REQUEST['trackers'],
+						'comment'=>$_REQUEST['comment'],
+						'source'=>$_REQUEST['source'],
+						'start_seeding'=>$_REQUEST['start_seeding'],
+						'piece_size'=>$_REQUEST['piece_size'],
+						'private'=>$_REQUEST['private'],
+						'hybrid'=>$_REQUEST['hybrid']
+					) );
+					$commands = array();
 
 					$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
 					$task->id." ".
@@ -206,5 +207,3 @@ if(isset($_REQUEST['cmd']))
 }
 
 cachedEcho(safe_json_encode($ret),"application/json");
-
-?>

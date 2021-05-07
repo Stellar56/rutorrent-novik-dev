@@ -21,5 +21,3 @@ if($useExternal!==false)
 }
 else
 	$theSettings->registerPlugin($plugin["name"],$pInfo["perms"]);
-
-?>

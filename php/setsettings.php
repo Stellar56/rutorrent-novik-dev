@@ -31,5 +31,3 @@ if(isset($_REQUEST['v']))
 	               	fclose( $fp );
 	}
 }
-
-?>

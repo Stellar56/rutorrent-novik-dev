@@ -8,15 +8,16 @@ class _cloudflareHooks
 
 	static public function OnURLFetched( $prm )
 	{
-if(!self::$in_progress && ($prm['method']=='GET')) {
+		if(!self::$in_progress &&
+			($prm['method']=='GET'))
+		{
 			self::$in_progress = true;
 			$scrape = new rCloudflare($prm['client'],$prm['uri']);
-if($scrape->process()) {
-	$prm['client']->fetch( $prm['uri'], $prm['method'], $prm['content_type'], $prm['body'] );
+			if($scrape->process())
+			{
+				$prm['client']->fetch( $prm['uri'], $prm['method'], $prm['content_type'], $prm['body'] );
+			}
+			self::$in_progress = false;
+		}
+	}
 }
-		self::$in_progress = false;
-}
-}
-}
-
-?>

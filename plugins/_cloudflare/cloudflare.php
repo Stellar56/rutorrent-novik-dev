@@ -70,5 +70,3 @@ class rCloudflare
 		return($ret);
 	}
 }
-
-?>
