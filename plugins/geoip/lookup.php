@@ -166,5 +166,4 @@
 		}
 	}
 	cachedEcho(safe_json_encode($ret),"application/json");
-
-?>
+	
