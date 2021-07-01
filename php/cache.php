@@ -82,7 +82,11 @@ class rCache
 			}
 			else
 			{
-if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($tmp->version)) || (isset($tmp->version) && ($tmp->version==$rss->version)))) {
+				if(($tmp!==false) && 
+					(!isset($rss->version) || 
+					(isset($rss->version) && !isset($tmp->version)) ||
+					(isset($tmp->version) && ($tmp->version==$rss->version))))
+				{
 				        $rss = $tmp;
 					$rss->modified = filemtime($fname);
 					$ret = true;
@@ -108,5 +112,3 @@ if(($tmp!==false) && (!isset($rss->version) || (isset($rss->version) && !isset($
 			
 	}
 }
-
-?>

@@ -13,18 +13,22 @@ class rCloudflare
 		$this->url = $url;
 	}
 
-protected function is_cloudflare_challenge() {
-		return( ($this->client->status == 503 || $this->client->status == 429) && (stripos( $this->client->get_header("Server"), "cloudflare" ) === 0) && $this->client->results 
+	protected function is_cloudflare_challenge()
+	{
+		return( ($this->client->status == 503 || $this->client->status == 429) &&
+			(stripos( $this->client->get_header("Server"), "cloudflare" ) === 0) &&
+			$this->client->results 
 //			&&
 //			(stripos( $this->client->results, "jschl_vc" ) !== false) &&
 //			(stripos( $this->client->results, "jschl_answer" ) !== false) 
-);
-}
+			);
+	}
 
-public static function is_module_present() {
+	public static function is_module_present()
+	{
 		exec( escapeshellarg(getExternal('python'))." -c \"import cloudscraper\" > /dev/null 2>&1", $output, $error_code);
 		return($error_code === 0);
-}
+	}
 
 	public function process()
 	{
@@ -32,8 +36,7 @@ public static function is_module_present() {
 		global $cloudscraper_recaptcha;
 
 		$ret = false;
-		if( $this->is_cloudflare_challenge() )
-		{
+if( $this->is_cloudflare_challenge() ) {
 			$url = '"'.addslashes($this->url).'"';
 			$agent = $this->client->agent ? '"'.addslashes($this->client->agent).'"' : 'None';
 			$proxies = '';
@@ -49,12 +52,12 @@ if($recaptcha_solving_enabled) {
 }
 	$code = escapeshellarg(getExternal('python'))." -c ".
 		escapeshellarg("import cloudscraper\nimport json\ntokens, user_agent = cloudscraper.get_tokens({$url}{$proxies}{$recaptcha})\nprint(json.dumps([tokens,user_agent]))");
-	$data = `{$code}`;
+			$data = `{$code}`;
 if($data && ($data = json_decode($data,true)) && is_array($data) && count($data) > 1 && !empty($data[0])) {
-	$this->client->setcookies();
-	$this->client->cookies = array_merge($this->client->cookies,$data[0]);
-	$this->client->agent = $data[1];
-	$ret = true;
+				$this->client->setcookies();
+				$this->client->cookies = array_merge($this->client->cookies,$data[0]);
+				$this->client->agent = $data[1];
+				$ret = true;
 }
 }
 		return($ret);

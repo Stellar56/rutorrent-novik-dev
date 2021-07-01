@@ -29,7 +29,7 @@ function getFlag($permissions,$pname,$fname)
 
 function getPluginInfo( $name, $permissions )
 {
-    $info = array( 
+        $info = array( 
 		'rtorrent.need'=>1, 
 		'rtorrent.remote'=>'ok',
 		'rtorrent.external.warning'=>array(),
@@ -51,18 +51,20 @@ function getPluginInfo( $name, $permissions )
 		'web.external.warning'=>array(),
 		'web.external.error'=>array(),
 		'plugin.help'=>'',
-);
-
+		);
 	$fname = "../plugins/".$name."/plugin.info";
-if(is_readable($fname)) {
+	if(is_readable($fname))
+	{
 		$lines = file($fname);
 		foreach($lines as $line)
 		{
 			$fields = explode(":",$line,2);
-if(count($fields)==2) {
+			if(count($fields)==2)
+			{
 				$value = addcslashes(trim($fields[1]),"\\\'\"\n\r\t");
 				$field = trim($fields[0]); 
-switch($field) {
+				switch($field)
+				{
 					case "plugin.help":
 					case "plugin.author":
 					case "plugin.description":
@@ -70,20 +72,20 @@ switch($field) {
 					{
 						$info[$field] = $value;
 						break;
-}
+					}
                                         case "plugin.may_be_shutdowned":
                                         case "plugin.may_be_launched":
                                         case "rtorrent.need":
 					{
 						$info[$field] = intval($value);
 						break;
-}
+					}
 					case "plugin.version":
 					case "plugin.runlevel":
 					{
 						$info[$field] = floatval($value);
 						break;
-}
+					}
 					case "rtorrent.version":
 					case "php.version":
 					{
@@ -91,7 +93,7 @@ switch($field) {
 						$info[$field] = (intval($version[0])<<16) + (intval($version[1])<<8) + intval($version[2]);
 						$info[$field.'.readable'] = $value;
 						break;
-}
+					}
 					case "plugin.dependencies":
 					case "rtorrent.external.warning":
 					case "rtorrent.external.error":
@@ -104,7 +106,7 @@ switch($field) {
 					{
 						$info[$field] = explode(',', $value);
 						break;
-}
+					}
 // for compatibility
 					case "author":
 					case "description":
@@ -136,32 +138,35 @@ switch($field) {
 		{
 			if(!getFlag($permissions,$name,"enabled"))
 				return(false);
-	$flags = array(
-		"canChangeToolbar" 	=> 0x0001,
-		"canChangeMenu" 	=> 0x0002,
-		"canChangeOptions"	=> 0x0004,
-		"canChangeTabs"		=> 0x0008,
-		"canChangeColumns"	=> 0x0010,
-		"canChangeStatusBar"	=> 0x0020,
-		"canChangeCategory"	=> 0x0040,
-		"canBeShutdowned"	=> 0x0080,
+			$flags = array(
+				"canChangeToolbar" 	=> 0x0001,
+				"canChangeMenu" 	=> 0x0002,
+				"canChangeOptions"	=> 0x0004,
+				"canChangeTabs"		=> 0x0008,
+				"canChangeColumns"	=> 0x0010,
+				"canChangeStatusBar"	=> 0x0020,
+				"canChangeCategory"	=> 0x0040,
+				"canBeShutdowned"	=> 0x0080,
 			/*	"canBeLaunched"		=> 0x0100, */
-);
-	foreach($flags as $flagName=>$flagVal)
-if(!getFlag($permissions,$name,$flagName))
-	$perms|=$flagVal;
+				);
+			foreach($flags as $flagName=>$flagVal)
+				if(!getFlag($permissions,$name,$flagName))
+					$perms|=$flagVal;
 
-if(!$info["plugin.may_be_shutdowned"])
-	$perms|=$flags["canBeShutdowned"];
-}
-	$info["perms"] = $perms;
-}
+			if(!$info["plugin.may_be_shutdowned"])
+				$perms|=$flags["canBeShutdowned"];
+
+		}
+		$info["perms"] = $perms;
+	}
 	return(array_key_exists("plugin.version",$info) ? $info : false);
 }
 
-function findRemoteEXE( $exe, $err, &$remoteRequests ) {
+function findRemoteEXE( $exe, $err, &$remoteRequests )
+{
 	$st = getSettingsPath().'/'.rand();
-if(!array_key_exists($exe,$remoteRequests)) {
+	if(!array_key_exists($exe,$remoteRequests))
+	{
 		$path=realpath(dirname('.'));
 		global $pathToExternals;
 		$cmd = array( "sh", addslash($path)."test.sh", $exe, $st );
@@ -210,7 +215,6 @@ $settingsFlags = array(
 	"canAddTorrentsWithResume"	=> 0x0400,	
 	"canAddTorrentsWithRandomizeHash"	=> 0x0800,	
 );
-
 $perms = 0;
 foreach($settingsFlags as $flagName=>$flagVal)
 	if(!array_key_exists($flagName,$permissions) || $permissions[$flagName])
@@ -522,5 +526,3 @@ if($handle = opendir('../plugins'))
 }
 
 cachedEcho($jResult,"application/javascript",true);
-
-?>
