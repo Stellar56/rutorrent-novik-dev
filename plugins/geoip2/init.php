@@ -5,7 +5,7 @@ use GeoIp2\Database\Reader;
 if($theSettings->isPluginRegistered("geoip"))
 	$jResult .= "plugin.disable();";
 else {
-	require_once( "sqlite.php" );
+	require_once("sqlite.php");
 
 	eval( getPluginConf( $plugin["name"] ) );
 
@@ -13,10 +13,10 @@ else {
 if($retrieveCountry) {
 require_once 'geoip2.phar';
 
-		$cityDbFile = $rootPath.'/plugins/geoip2/database/GeoLite2-City.mmdb';
-		$countryDbFile = $rootPath.'/plugins/geoip2/database/GeoLite2-Country.mmdb';
+	$cityDbFile = $rootPath.'/plugins/geoip2/database/GeoLite2-City.mmdb';
+	$countryDbFile = $rootPath.'/plugins/geoip2/database/GeoLite2-Country.mmdb';
 
-try{
+try {
 if(is_file($cityDbFile) && is_readable($cityDbFile))
 	$reader = new Reader($cityDbFile);
 else {
@@ -28,15 +28,19 @@ else {
 }
 }
 }
-	catch(Exception $e){$retrieveCountry = false; $jResult .= "plugin.showError('theUILang.databaseError');";}
+	
+catch(Exception $e){
+	$retrieveCountry = false;
+	$jResult .= "plugin.showError('theUILang.databaseError');";
+}
 }
 	$retrieveComments = ($retrieveComments && sqlite_exists());
 
-if( $retrieveCountry || $retrieveHost || $retrieveComments ) {
+if ($retrieveCountry || $retrieveHost || $retrieveComments) {
 	$theSettings->registerPlugin($plugin["name"], $pInfo["perms"]);
-if($retrieveCountry)
+if ($retrieveCountry)
 	$jResult .= "plugin.retrieveCountry = true;";
-if($retrieveComments)
+if ($retrieveComments)
 	$jResult .= "plugin.retrieveComments = true;";
 } else
 		$jResult .= "plugin.disable();";
