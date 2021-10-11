@@ -13,4 +13,3 @@ $pathToCreatetorrent = '/usr/bin/mktorrent';	// Something like /bin/createtorren
 
 $recentTrackersMaxCount = 15;
 
-?>
