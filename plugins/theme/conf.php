@@ -1,3 +1,4 @@
 <?php
 
-$defaultTheme = ""; // May be "", "Oblivion", "Dark", "Blue" or "Acid"
+$defaultTheme = "SpiritOfBonobo"; // May be "", "Oblivion", "Dark", "Blue" "SpiritOfBonobo" or "Acid"
+
