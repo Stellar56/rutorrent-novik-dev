@@ -14,7 +14,7 @@ var theWebUI =
 			columns:
 			[
 				{ text: theUILang.Name, 		width: "200px", id: "name",		type: TYPE_STRING }, 
-		      		{ text: theUILang.Status, 		width: "100px",	id: "status",		type: TYPE_STRING },
+		      	{ text: theUILang.Status, 		width: "100px",	id: "status",		type: TYPE_STRING },
 		   		{ text: theUILang.Size, 		width: "60px",	id: "size", 		type: TYPE_NUMBER },
 	   			{ text: theUILang.Done, 		width: "100px",	id: "done",		type: TYPE_PROGRESS },
 				{ text: theUILang.Downloaded, 		width: "100px",	id: "downloaded",	type: TYPE_NUMBER },
@@ -954,9 +954,9 @@ var theWebUI =
 	{
 		return(
 			(/(http|https|udp):\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}((:(\d){2,5})|).*(\/a.*(\?.+=.+|\/.+)|\?.+=.+)/i).test(url) ||
-			(/(http|https|udp):\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}((:(\d){2,5})|)\/.*[0-9a-z]{8,32}\/an/i).test(url) ||
+			(/(http|https|udp):\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}((:(\d){2,5})|)\/.*[0-9a-z]{8,32}\/a/i).test(url) ||
 			(/(http|https|udp):\/\/[a-z0-9-\.]+\.[a-z]{2,253}((:(\d){2,5})|).*(\/a.*(\?.+=.+|\/.+)|\?.+=.+)/i).test(url) ||
-			(/(http|https|udp):\/\/[a-z0-9-\.]+\.[a-z]{2,253}((:(\d){2,5})|)\/.*[0-9a-z]{8,32}\/an/i).test(url) ? 1 : 0 );
+			(/(http|https|udp):\/\/[a-z0-9-\.]+\.[a-z]{2,253}((:(\d){2,5})|)\/.*[0-9a-z]{8,32}\/a/i).test(url) ? 1 : 0 );
 	},
 
    	trkSelect: function(e, id) 
@@ -2689,3 +2689,4 @@ $(document).ready(function()
 	theTabs.init();
 	theWebUI.init();
 });
+
