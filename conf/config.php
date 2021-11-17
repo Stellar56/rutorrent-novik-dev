@@ -6,6 +6,7 @@
 	@define('HTTP_TIME_OUT', 60, true);	// in seconds
 	@define('HTTP_USE_GZIP', true, true);
 	$httpIP = null;				// IP string. Or null for any.
+	
 	$httpProxy = array(
 		'use' 	=> false,
 		'proto'	=> 'http',		// 'http' or 'https'
