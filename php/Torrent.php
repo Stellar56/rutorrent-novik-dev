@@ -565,37 +565,37 @@ class Torrent
 						continue;
 					if(is_dir( $path ))
 						$paths = array_merge( self::scandir( $path ), $paths );
-					else
-						if(is_file($path))
-							$paths[] = $path;
-				}
+else
+if(is_file($path))
+	$paths[] = $path;
+}
         	return $paths;
-	}
+}
 
 	/** Helper to pack data hash
 	 * @param string data
 	 * @return string packed data hash
 	 */
-	static protected function pack( & $data )
-	{
-		return(sha1( $data, true ) . ( $data = '' ));
-    	}
+	
+static protected function pack( & $data ) {
+return(sha1($data, true) . ($data = ''));
+}
 
 	/**** Analyze BitTorrent ****/
 
 	/** Get piece length
 	 * @return integer piece length or null if not set
 	 */
-	public function piece_length()
-	{
-        	return(isset( $this->info['piece length'] ) ? $this->info['piece length'] : null );
-	}
+public function piece_length() {
+    return(isset( $this->info['piece length'] ) ? $this->info['piece length'] : null);
+}
 
 	/** Compute hash info
 	 * @return string hash info or null if info not set
 	 */
-	public function hash_info()
-	{
-        	return(isset( $this->info ) ? strtoupper(sha1( self::encode( $this->info ) )) : null);
-	}
+	
+public function hash_info() {
+    return(isset( $this->info ) ? strtoupper(sha1( self::encode( $this->info ) )) : null);
 }
+}
+

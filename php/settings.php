@@ -31,8 +31,7 @@ class rTorrentSettings
 
 	static private $theSettings = null;
 
-	private $ratioCmds = array
-	(
+	private $ratioCmds = array(
 		"view",          
 		"view.set",
 		"ratio.min",
@@ -41,111 +40,93 @@ class rTorrentSettings
 		"ratio.max.set",
 		"ratio.upload",
 		"ratio.upload.set",
-	);
+);
 
-	private function __construct()
-    	{
-    		if( array_key_exists("browser_timezone",$_COOKIE) )
-    		{
-			$this->tz = $_COOKIE["browser_timezone"];
-		}
-	}
+private function __construct() {
+if( array_key_exists("browser_timezone",$_COOKIE) ) {
+	$this->tz = $_COOKIE["browser_timezone"];
+}
+}
 
-	private function __clone()
-    	{
-    	}
+private function __clone() {
+}
 
-	public function registerPlugin($plugin,$data = true)
-	{
-		$this->plugins[$plugin] = $data;
-	}
-	public function unregisterPlugin($plugin)
-	{
+public function registerPlugin($plugin,$data = true) {
+	$this->plugins[$plugin] = $data;
+}
+	
+public function unregisterPlugin($plugin) {
 		unset($this->plugins[$plugin]);
-	}
-	public function getPluginData($plugin)
-	{
-		$ret = null;
-		if(array_key_exists($plugin,$this->plugins))
-			$ret = $this->plugins[$plugin];
+}
+	
+public function getPluginData($plugin) {
+	$ret = null;
+if(array_key_exists($plugin,$this->plugins))
+	$ret = $this->plugins[$plugin];
 		return($ret);
-	}
-	public function isPluginRegistered($plugin)
-	{
+}
+	
+public function isPluginRegistered($plugin) {
 		return(array_key_exists($plugin,$this->plugins));
-	}
+}
 
 	public function registerEventHook( $plugin, $ename, $level = 10, $save = false )
 	{
-		$subject = array
-		(
-			"name" => $plugin,
-			"level" => $level,
-		);
+	$subject = array(
+		"name" => $plugin,
+		"level" => $level,
+);
 
 		$sort = function ($a,$b) 
-		{ 
+{ 
 			$lvl1 = (float) $a["level"];
 			$lvl2 = (float) $b["level"];
 			return( $lvl1 > $lvl2 ? 1 : 
 				($lvl1 < $lvl2 ? -1 : strcmp($a["name"], $b["name"]) ));
-		};
+};
 
-		if(is_array($ename))
-		{
-			foreach( $ename as $name )
-			{
-				$this->hooks[$name][] = $subject;
-				usort( $this->hooks[$name], $sort );
-			}
-		}
-		else
-		{
-			$this->hooks[$ename][] = $subject;
-			usort( $this->hooks[$ename], $sort );
-		}
+if(is_array($ename)) {
+foreach( $ename as $name ) {
+	$this->hooks[$name][] = $subject;
+		usort( $this->hooks[$name], $sort );
+}
+} else {
+	$this->hooks[$ename][] = $subject;
+		usort( $this->hooks[$ename], $sort );
+}
 		// hooks with lesser level runs first
-		if( $save )
-		{
-			$this->store();
-		}
-	}
+if( $save ) {
+	$this->store();
+}
+}
 	protected function unregisterEventHookPrim( $plugin, $ename )
 	{
-	        if( array_key_exists($ename, $this->hooks) )
-	        {
-			for( $i = 0; $i<count($this->hooks[$ename]); $i++ )
-			{
-				if($this->hooks[$ename][$i] == $plugin)
-				{
-					unset($this->hooks[$ename][$i]);
-					if( empty($this->hooks[$ename]) )
-					{
-						unset($this->hooks[$ename]);
-					}
-					break;
-				}
-			}
-		}
-	}
-	public function unregisterEventHook( $plugin, $ename, $save = true )
-	{
-		if(is_array($ename))
-		{
-			foreach( $ename as $name )
-			{
-				$this->unregisterEventHookPrim( $plugin, $name );
-			}
-		}
-		else
-		{
-			$this->unregisterEventHookPrim( $plugin, $ename );
-		}
-		if( $save )
-		{
-			$this->store();
-		}
-	}
+if( array_key_exists($ename, $this->hooks) ) {
+for( $i = 0; $i<count($this->hooks[$ename]); $i++ ) {
+if($this->hooks[$ename][$i] == $plugin) {
+		unset($this->hooks[$ename][$i]);
+if( empty($this->hooks[$ename]) ) {
+		unset($this->hooks[$ename]);
+}
+		break;
+}
+}
+}
+}
+	
+public function unregisterEventHook( $plugin, $ename, $save = true ) {
+if(is_array($ename)) {
+foreach( $ename as $name ) {
+	$this->unregisterEventHookPrim( $plugin, $name );
+}
+} else {
+	$this->unregisterEventHookPrim( $plugin, $ename );
+}
+		
+if($save) {
+	$this->store();
+}
+}
 	public function pushEvent( $ename, $prm )
 	{
 		if( array_key_exists($ename,$this->hooks))
@@ -154,19 +135,16 @@ class rTorrentSettings
 			foreach( $this->hooks[$ename] as $hook )
 			{
 				$file = dirname(__FILE__).'/../plugins/'.$hook['name'].'/hooks.php';
-				if(is_file($file))
-				{
-					require_once( $file );
-					$func = $hook['name'].'Hooks::On'.$ename;
-					if(is_callable( $func ) && 
-						(call_user_func_array($func,$prm)==true))
-					{
-						break;
-					}
-				}
-			}
-		}
-	}
+if(is_file($file)) {
+require_once( $file );
+	$func = $hook['name'].'Hooks::On'.$ename;
+if(is_callable( $func ) && (call_user_func_array($func,$prm)==true)) {
+			break;
+}
+}
+}
+}
+}
 
 	public function store()
 	{
@@ -180,19 +158,17 @@ class rTorrentSettings
 			self::$theSettings = new rTorrentSettings();
 			if($create)
 				self::$theSettings->obtain();
-			else
-			{
+else {
 				$cache = new rCache();
 				$cache->get(self::$theSettings);
-			}
-		}
+}
+}
 		return(self::$theSettings);
-	}
-	public function obtain()
-	{
+}
+	
+public function obtain() {
 		$req = new rXMLRPCRequest( new rXMLRPCCommand("system.client_version") );
-		if($req->run() && count($req->val))
-		{
+if($req->run() && count($req->val)) {
 			$this->linkExist = true;
 			$this->version = $req->val[0];
 			$parts = explode('.', $this->version);
@@ -200,34 +176,31 @@ class rTorrentSettings
 			for($i = 0; $i<count($parts); $i++)
 				$this->iVersion = ($this->iVersion<<8) + $parts[$i];
 
-			if($this->iVersion>0x806)
-			{
-				$this->aliases = array
-				(
-					"d.set_peer_exchange" 		=> array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
-					"d.set_connection_seed"		=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
-				);
-			}
-			if($this->iVersion==0x808)
-			{
-				$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
-				$req->important = false;
-				if($req->success())
-					$this->iVersion=0x809;
-			}
-			if($this->iVersion>=0x904)
-			{
-				require_once( 'methods-0.9.4.php' );
-			}
+if($this->iVersion>0x806) {
+	$this->aliases = array(
+		"d.set_peer_exchange" => array( "name"=>"d.peer_exchange.set", "prm"=>0 ),
+		"d.set_connection_seed"	=> array( "name"=>"d.connection_seed.set", "prm"=>0 ),
+);
+}
+
+if($this->iVersion==0x808) {
+	$req = new rXMLRPCRequest( new rXMLRPCCommand("file.prioritize_toc") );
+	$req->important = false;
+if($req->success())
+	$this->iVersion=0x809;
+}
+
+if($this->iVersion>=0x904) {
+require_once( 'methods-0.9.4.php' );
+}
 			
-			$this->apiVersion = 0;
-			if($this->iVersion>=0x901)
-			{
-				$req = new rXMLRPCRequest( new rXMLRPCCommand("system.api_version") );
-				$req->important = false;
-				if($req->success())
-					$this->apiVersion = $req->val[0];
-			}
+	$this->apiVersion = 0;
+if($this->iVersion>=0x901) {
+	$req = new rXMLRPCRequest( new rXMLRPCCommand("system.api_version") );
+	$req->important = false;
+if($req->success())
+	$this->apiVersion = $req->val[0];
+}
 
 //			if($this->apiVersion >= 11)	// at current moment (2019.07.20) this is feature-bind branch of rtorrent
 //			{
@@ -243,23 +216,22 @@ class rTorrentSettings
 //				));
 //			}
 
-                        $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
-			if($req->run())
-			{
-				if(!$req->fault)
-					$this->badXMLRPCVersion = false;
-				$req = new rXMLRPCRequest( array(
-					new rXMLRPCCommand("get_directory"),
-					new rXMLRPCCommand("get_session"),
-					new rXMLRPCCommand("system.library_version"),
-					new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
-					new rXMLRPCCommand("get_name"),
-					new rXMLRPCCommand("get_port_range"),
-					new rXMLRPCCommand("get_bind"),
-					new rXMLRPCCommand("get_ip"),
-					) );
-				if($req->success())
-				{
+    $req = new rXMLRPCRequest( new rXMLRPCCommand("to_kb", floatval(1024)) );
+if($req->run()) {
+if(!$req->fault)
+	$this->badXMLRPCVersion = false;
+	$req = new rXMLRPCRequest( array(
+		new rXMLRPCCommand("get_directory"),
+		new rXMLRPCCommand("get_session"),
+		new rXMLRPCCommand("system.library_version"),
+		new rXMLRPCCommand("set_xmlrpc_size_limit",67108863),
+		new rXMLRPCCommand("get_name"),
+		new rXMLRPCCommand("get_port_range"),
+		new rXMLRPCCommand("get_bind"),
+		new rXMLRPCCommand("get_ip"),
+) );
+
+if($req->success()) {
 					$this->directory = $req->val[0];
   		        	        $this->session = $req->val[1];
 					$this->libVersion = $req->val[2];
@@ -279,43 +251,39 @@ class rTorrentSettings
 
 					if(isLocalMode())
 					{
-	                                        if(!empty($this->session))
-	                                        {
+if(!empty($this->session)) {
 							$this->started = @filemtime($this->session.'/rtorrent.lock');
 							if($this->started===false)
 								$this->started = 0;
-						}
-						$id = getExternal('id');
-						$req = new rXMLRPCRequest(
-        						new rXMLRPCCommand("execute_capture",array("sh","-c",$id." -u ; ".$id." -G ; echo ~ ")));
-						if($req->run() && !$req->fault && (($line=explode("\n",$req->val[0]))!==false) && (count($line)>2))
-						{
-							$this->uid = intval(trim($line[0]));
-							$this->gid = explode(' ',trim($line[1]));
-							$this->home = trim($line[2]);
-							if(!empty($this->directory) &&
-								($this->directory[0]=='~'))
-								$this->directory = $this->home.substr($this->directory,1);	
-						}
-						else
-							$this->idNotFound = true;
-					}
-					$this->store();
-				}
-			}
-		}
-	}
-	public function getCommand($cmd)
-	{
-	        $add = '';
-		$len = strlen($cmd);
-		if($len && ($cmd[$len-1]=='='))
-		{
-			$cmd = substr($cmd,0,-1);
-			$add = '=';
-		}
+}
+	$id = getExternal('id');
+	$req = new rXMLRPCRequest(new rXMLRPCCommand("execute_capture",array("sh","-c",$id." -u ; ".$id." -G ; echo ~ ")));
+if($req->run() && !$req->fault && (($line=explode("\n",$req->val[0]))!==false) && (count($line)>2)) {
+	$this->uid = intval(trim($line[0]));
+	$this->gid = explode(' ',trim($line[1]));
+	$this->home = trim($line[2]);
+
+if(!empty($this->directory) && ($this->directory[0]=='~'))
+	$this->directory = $this->home.substr($this->directory,1);	
+} else
+	$this->idNotFound = true;
+}
+	$this->store();
+}
+}
+}
+}
+	
+public function getCommand($cmd) {
+	$add = '';
+	$len = strlen($cmd);
+
+if($len && ($cmd[$len-1]=='=')) {
+	$cmd = substr($cmd,0,-1);
+	$add = '=';
+}
 		return(array_key_exists($cmd,$this->aliases) ? $this->aliases[$cmd]["name"].$add : $cmd.$add);		
-	}
+}
 	public function getRatioGroupCommand($ratio,$cmd,$args)
 	{
 		$prefix = ($this->iVersion >= 0x904) && in_array($cmd,$this->ratioCmds) ? "group2." : "group.";
@@ -382,22 +350,21 @@ class rTorrentSettings
 		if(strlen($dir) && ($dir[0]=='~'))
 			$dir = $this->home.substr($dir,1);
 		$dir = fullpath($dir,$this->directory);
-		if($resolve_links)
-		{
-			$path = realpath($dir);
-			if(!$path)
-				$dir = addslash(realpath(dirname($dir))).basename($dir);
-			else
-				$dir = $path;	
-		}
-		return(strpos(addslash($dir),$topDirectory)===0);
-	}
-	public function patchDeprecatedCommand( $cmd, $name )
-	{
-		if((array_key_exists($name,$this->aliases) && $this->aliases[$name]["prm"]) || 
-			(($this->iVersion>=0x904) && (strpos($cmd->command,"group2.")===0)))
-			$cmd->addParameter("");
-	}
+
+if($resolve_links) {
+	$path = realpath($dir);
+if(!$path)
+	$dir = addslash(realpath(dirname($dir))).basename($dir);
+else
+	$dir = $path;	
+}
+return(strpos(addslash($dir),$topDirectory)===0);
+}
+	
+public function patchDeprecatedCommand( $cmd, $name ) {
+if((array_key_exists($name,$this->aliases) && $this->aliases[$name]["prm"]) || (($this->iVersion>=0x904) && (strpos($cmd->command,"group2.")===0)))
+	$cmd->addParameter("");
+}
 	public function patchDeprecatedRequest($commands)
 	{
 		if($this->iVersion>=0x904)
@@ -413,15 +380,12 @@ class rTorrentSettings
 				else
 				if(strpos($cmd->command, 'f.') === 0)
 					$prefix = ':f';
-				if(!empty($prefix) && 
-					(count($cmd->params)>1) && 
-					(substr($cmd->command, -10) !== '.multicall') &&
-					(strpos($cmd->params[0]->value, ':') === false) )
-				{
-					$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
-					array_splice( $cmd->params, 1, 1 );
-				}
-			}
-		}
-	}
+if(!empty($prefix) && (count($cmd->params)>1) && (substr($cmd->command, -10) !== '.multicall') && (strpos($cmd->params[0]->value, ':') === false) ) {
+	$cmd->params[0]->value = $cmd->params[0]->value.$prefix.$cmd->params[1]->value;
+	array_splice( $cmd->params, 1, 1 );
 }
+}
+}
+}
+}
+
