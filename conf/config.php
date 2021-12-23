@@ -6,7 +6,6 @@
 	@define('HTTP_TIME_OUT', 60, true);	// in seconds
 	@define('HTTP_USE_GZIP', true, true);
 	$httpIP = null;				// IP string. Or null for any.
-	
 	$httpProxy = array(
 		'use' 	=> false,
 		'proto'	=> 'http',		// 'http' or 'https'
@@ -20,7 +19,7 @@
 	@define('LOG_RPC_FAULTS', true, true);
 
 	// for php
-	@define('PHP_USE_GZIP', false, true);
+	@define('PHP_USE_GZIP', false, false);
 	@define('PHP_GZIP_LEVEL', 2, true);
 
 	$schedule_rand = 10;			// rand for schedulers start, +0..X seconds

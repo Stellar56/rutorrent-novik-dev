@@ -38,35 +38,34 @@ if(isset($HTTP_RAW_POST_DATA))
 				}
 				case "done":
 				{
+					if(!is_null($perms) && !($perms & FLAG_CANT_SHUTDOWN))
+					{
+						$php = "../plugins/".$parts[1]."/done.php";
+						if(is_file($php) && is_readable($php))
+							require_once($php);
+						$theSettings->unregisterPlugin($parts[1]);
+						$jResult.="thePlugins.get('".$parts[1]."').remove();";
+					}
+					break;
+				}
+				case "launch":
+				{
+					if(is_null($perms) || ($perms & FLAG_CAN_CHANGE_LAUNCH))
+					{
+						$userPermissions[$parts[1]] = true;
+						$jResult.="thePlugins.get('".$parts[1]."').launch();";
+					}
+					break;
+				}
 
-if(!is_null($perms) && !($perms & FLAG_CANT_SHUTDOWN)) {
-	$php = "../plugins/".$parts[1]."/done.php";
-if(is_file($php) && is_readable($php))
-require_once($php);
-	$theSettings->unregisterPlugin($parts[1]);
-	$jResult.="thePlugins.get('".$parts[1]."').remove();";
-}
-		break;
-}
-				
-	case "launch":
-{
+			}
+		}
+	}
 
-if(is_null($perms) || ($perms & FLAG_CAN_CHANGE_LAUNCH)) {
-	$userPermissions[$parts[1]] = true;
-	$jResult.="thePlugins.get('".$parts[1]."').launch();";
-}
-		break;
-}
-}
-}
-}
-
-if($cmd=="done")
-	$theSettings->store();
-else
-	$cache->set($userPermissions);
+	if($cmd=="done")
+		$theSettings->store();
+	else
+		$cache->set($userPermissions);
 }
 
 cachedEcho($jResult,"application/javascript");
-
