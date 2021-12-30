@@ -78,8 +78,10 @@ class recentTrackers
 }
 
 $ret = array();
-if(isset($_REQUEST['cmd'])) {
-switch($_REQUEST['cmd']) {
+if(isset($_REQUEST['cmd']))
+{
+	switch($_REQUEST['cmd'])
+	{
 		case "rtget":
 		{
 			$rt = recentTrackers::load();
@@ -128,19 +130,20 @@ switch($_REQUEST['cmd']) {
 							{
 								$trackers[] = $value;
 								$rt->list[] = $value;
-} else {
-
-if(count($trackers)>0) {
-	$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
-	$trackers = array();
-}
-}
-}
-}
-	$rt->store();
-
-if(count($trackers)>0)
-	$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
+                                                        }
+                                                        else
+							{
+								if(count($trackers)>0)
+								{
+									$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
+									$trackers = array();
+								}
+							}
+						}
+					}
+					$rt->store();
+					if(count($trackers)>0)
+						$announce_list .= (' -a '.escapeshellarg(implode(',',$trackers)));
 					$piece_size = 262144;
 					if(isset($_REQUEST['piece_size']))
 						$piece_size = $_REQUEST['piece_size']*1024;
@@ -152,24 +155,24 @@ if(count($trackers)>0)
 						$hybrid = TRUE;
 					if($useExternal===false)
 						$useExternal = "inner";
-	$task = new rTask( array(
-		'arg' => getFileName($path_edit),
-		'requester'=>'create',
-		'name'=>'create',
-		'path_edit'=>$_REQUEST['path_edit'],
-		'trackers'=>$_REQUEST['trackers'],
-		'comment'=>$_REQUEST['comment'],
-		'source'=>$_REQUEST['source'],
-		'start_seeding'=>$_REQUEST['start_seeding'],
-		'piece_size'=>$_REQUEST['piece_size'],
-		'private'=>$_REQUEST['private'],
-		'hybrid'=>$_REQUEST['hybrid']
-) );
-	
-	$commands = array();
+					$task = new rTask( array
+					(
+						'arg' => getFileName($path_edit),
+						'requester'=>'create',
+						'name'=>'create',
+						'path_edit'=>$_REQUEST['path_edit'],
+						'trackers'=>$_REQUEST['trackers'],
+						'comment'=>$_REQUEST['comment'],
+						'source'=>$_REQUEST['source'],
+						'start_seeding'=>$_REQUEST['start_seeding'],
+						'piece_size'=>$_REQUEST['piece_size'],
+						'private'=>$_REQUEST['private'],
+						'hybrid'=>$_REQUEST['hybrid']
+					) );
+					$commands = array();
 
-	$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
-	$task->id." ".
+					$commands[] = escapeshellarg($rootPath.'/plugins/create/'.$useExternal.'.sh')." ".
+					$task->id." ".
 					escapeshellarg(getPHP())." ".
 					escapeshellarg($pathToCreatetorrent)." ".
 					escapeshellarg($path_edit)." ".
@@ -182,13 +185,14 @@ if(count($trackers)>0)
 					$commands[] = 'chmod a+r "${dir}"/result.torrent';
 					$commands[] = '}';
 					$ret = $task->start($commands, 0);
-			break;
-} else
-	$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
-}
+					break;
+				}
+				else
+					$error = 'Incorrect directory ('.mb_substr($path_edit,mb_strlen($topDirectory)-1).')';
+			}
 			$ret = array( "no"=>-1, "pid"=>0, "status"=>255, "log"=>array(), "errors"=>array($error) );
 			break;
-}
+		}
 		case "getfile":
 		{
 			$dir = rTask::formatPath( $_REQUEST['no'] );
@@ -203,4 +207,3 @@ if(count($trackers)>0)
 }
 
 cachedEcho(safe_json_encode($ret),"application/json");
-
