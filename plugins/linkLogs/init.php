@@ -12,4 +12,3 @@ $jResult .= "plugin.optionlink = '".$optionlink."';";
 
 $theSettings->registerPlugin("linklogs");
 
-?>

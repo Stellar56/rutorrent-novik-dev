@@ -8,6 +8,4 @@
 	// For retrieve hosts
 
 	$dnsResolver = '1.1.1.2';	// use gethostbyaddr, if null
-	$dnsResolverTimeout = 2;	// timeout in seconds
-
-?>
+	$dnsResolverTimeout = 5;	// timeout in seconds
