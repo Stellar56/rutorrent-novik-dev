@@ -1,41 +1,32 @@
 <?php
 
-$fm['tempdir'] = '/tmp';		// path were to store temporary data ; must be writable
-$fm['mkdperm'] = 755; 		// default permission to set to new created directories
-
+global $pathToExternals;
 // set with fullpath to binary or leave empty
+$pathToExternals['rar'] = '/usr/bin/rar';
+$pathToExternals['zip'] = '/usr/bin/zip';
+$pathToExternals['unzip'] = '/usr/bin/unzip';
+$pathToExternals['tar'] = '/usr/bin/tar';
+// $pathToExternals['gzip'] = '@GZIP@';
+// $pathToExternals['bzip2'] = '@BZIP2@';
 
-if(empty($pathToExternals['rar']))	// May be path already defined?
-{
-	$pathToExternals['rar'] = '/usr/bin/rar';
-}
-if(empty($pathToExternals['zip']))	// May be path already defined?
-{
-	$pathToExternals['zip'] = '/usr/bin/zip';
-}
-if(empty($pathToExternals['unzip']))	// May be path already defined?
-{
-	$pathToExternals['unzip'] = '/usr/bin/unzip';
-}
-if(empty($pathToExternals['tar']))	// May be path already defined?
-{
-	$pathToExternals['tar'] = '/usr/bin/tar';
-}
-if(empty($pathToExternals['gzip']))	// May be path already defined?
-{
-	$pathToExternals['gzip'] = '/usr/bin/gzip';
-}
-if(empty($pathToExternals['bzip2']))	// May be path already defined?
-{
-	$pathToExternals['bzip2'] = '/usr/bin/bzip2';
-}
+$config['mkdperm'] = 755; 		// default permission to set to new created directories
+$config['show_fullpaths'] = false; // wheter to show userpaths or full system paths in the UI
 
+
+$config['textExtensions'] = 'txt|nfo|sfv|xml|html';
 // archive mangling, see archiver man page before editing
+// archive.fileExt -> config
+$config['archive']['type'] = [
+    'rar' => [  'bin' =>'rar',
+                'compression' => range(0, 5),
+    ],
+    'zip' => [
+        'bin' =>'zip',
+        'compression' => ['-0', '-1', '-9'],
+        ],
+    'tar' => [
+        'bin' =>'tar',
+        'compression' => [0, 'gzip', 'bzip2'],
+    ]
+];
 
-$fm['archive']['types'] = array('rar', 'zip', 'tar', 'gzip', 'bzip2');
-
-$fm['archive']['compress'][0] = range(0, 5);
-$fm['archive']['compress'][1] = array('-0', '-1', '-9');
-$fm['archive']['compress'][2] = $fm['archive']['compress'][3] = $fm['archive']['compress'][4] = array(0);
-
-?>
