@@ -72,3 +72,4 @@
 	$enableCSRFCheck = false;		// If true then Origin and Referer will be checked
 	$enabledOrigins = array();		// List of enabled domains for CSRF check (only hostnames, without protocols, port etc.).
 						// If empty, then will retrieve domain from HTTP_HOST / HTTP_X_FORWARDED_HOST
+
