@@ -151,14 +151,35 @@ var theWebUI =
 		"webui.ignore_timeouts":	0,
 		"webui.retry_on_error":		120,
 		"webui.closed_panels":		{},
+		"webui.open_tegs.last": [],
+		"webui.open_tegs.keep": 0,
+		"webui.selected_labels.last": {},
+		"webui.selected_labels.keep": 0,
+		"webui.selected_tab.last": {},
+		"webui.selected_tab.keep": 0,
 		"webui.timeformat":		0,
 		"webui.dateformat":		0,
 		"webui.speedintitle":		0,
+		"webui.speedgraph.max_seconds": 600,
 		"webui.log_autoswitch":		1,
 		"webui.show_labelsize":		1,
 		"webui.show_searchlabelsize":	0,
 		"webui.show_statelabelsize":	0,
-		"webui.register_magnet":	0
+		"webui.show_label_path_tree":	1,
+		"webui.show_empty_path_labels":	0,
+		"webui.register_magnet":	0,
+		...(() => {
+			const defaults = {};
+			const units = ['default', 'kb', 'mb', 'gb', 'tb', 'pb'];
+			for(const [context, udef] of Object.entries({
+				catlist: [2, 0,1,1], table: [2], details: [2], other: [1]
+			})) {
+				for (let u = 0; u < units.length; u++) {
+					defaults['webui.size_decimal_places.' + context + '.' + units[u]] = udef[u] == null ? '' : udef[u].toString();
+				}
+			}
+			return defaults;
+		})(),
 	},
 	showFlags: 0,
 	total:
@@ -436,6 +457,11 @@ var theWebUI =
 			return(this.oldFilesSortNumeric(x,y));
 		}
 		this.speedGraph.create($("#Speed"));
+		const tab = theWebUI.settings['webui.selected_tab.keep'] ?
+					theWebUI.settings['webui.selected_tab.last'] : 'lcont';
+		theTabs.show(tab);
+		this.activeView = tab;
+
 		if(!this.settings["webui.show_cats"])
 			$("#CatList").hide();
 		if(!this.settings["webui.show_dets"])
@@ -468,10 +494,30 @@ var theWebUI =
 		}
 		if(!theWebUI.systemInfo.rTorrent.started)
 			$(theWebUI.getTable("trt").scp).text(theUILang.noTorrentList).show();
+
 		$(".catpanel").each( function()
 		{
 			theWebUI.showPanel(this,!theWebUI.settings["webui.closed_panels"][this.id]);
 		});
+		// recreate tegs if enabled
+		if (theWebUI.settings["webui.open_tegs.keep"]) {
+			for(const tegStr of theWebUI.settings["webui.open_tegs.last"]) {
+				theWebUI.createTeg(tegStr);
+			}
+		}
+		// switch to labels if keeping selected labels is enabled
+		if (theWebUI.settings["webui.selected_labels.keep"]) {
+			this.actLbls = this.settings['webui.selected_labels.last'];
+			for(const labelType in this.actLbls) {
+				if (labelType in this.actLbls) {
+					const ele = $$(this.actLbls[labelType]);
+					if (ele) {
+						$($$(labelType)).find(".sel").removeClass("sel");
+						$(ele).addClass("sel");
+					}
+				}
+			}
+		}
 
 		// user must be able add peer when peers are empty
 		$("#PeerList .stable-body").mouseclick(function(e)
@@ -771,6 +817,12 @@ var theWebUI =
 									theWebUI.resetInterval();
 								break;
 							}
+							case "webui.speedgraph.max_seconds":
+							{
+								theWebUI.speedGraph.setMaxSeconds(parseInt(theWebUI.settings['webui.speedgraph.max_seconds']))
+								theWebUI.speedGraph.draw();
+								break;
+							}
 						}
 					}
 					else
@@ -836,13 +888,21 @@ var theWebUI =
 			theWebUI.settings["webui."+ndx+".sindex2"] = table.obj.secIndex;
 			theWebUI.settings["webui."+ndx+".rev2"] = table.obj.secRev;
 		});
-	        var cookie = {};
-	        theWebUI.settings["webui.search"] = theSearchEngines.current;
-	        $.each(theWebUI.settings, function(i,v)
+
+		this.settings['webui.selected_tab.last'] = this.activeView;
+		const savedActLbls = {}
+		for (const labelType of ['pstate_cont', 'plabel_cont', 'flabel_cont', 'ptrackers_cont']) {
+			savedActLbls[labelType] = this.actLbls[labelType];
+		}
+		this.settings['webui.selected_labels.last'] = savedActLbls;
+		this.settings['webui.open_tegs.last'] = Object.values(this.tegs).map(t => t.val);
+		var cookie = {};
+		theWebUI.settings["webui.search"] = theSearchEngines.current;
+		for(const [i,v] of Object.entries(theWebUI.settings))
 		{
 			if((/^webui\./).test(i))
 				cookie[i] = v;
-		});
+		}
 		theWebUI.request("?action=setuisettings&v=" + JSON.stringify(cookie),reply);
 	},
 
@@ -1442,12 +1502,15 @@ var theWebUI =
    		_bf.push([theUILang.Remove_label, (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel",id) ? "theWebUI.removeLabel()" : null]);
    		_bf.push([CMENU_SEP]);
 		for(var lbl in this.cLabels)
-   		{
-      			if((table.selCount == 1) && (this.torrents[id].label == lbl))
-         			_bf.push([CMENU_SEL, lbl+" "]);
-      			else
-         			_bf.push([lbl+" ", (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel",id) ? "theWebUI.setLabel('" + addslashes(lbl) + "')" : null]);
-      		}
+		{
+			var lblText = this.settings['webui.show_label_path_tree'] ?
+				'│'.repeat(this.cLabels[lbl].level) + this.cLabelText(lbl):
+				lbl;
+			if((table.selCount == 1) && (this.torrents[id].label == lbl))
+				_bf.push([CMENU_SEL, lblText]);
+			else
+				_bf.push([lblText, (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel",id) ? "theWebUI.setLabel('" + addslashes(lbl) + "')" : null]);
+		}
    		theContextMenu.add([CMENU_CHILD, theUILang.Labels, _bf]);
    		theContextMenu.add([CMENU_SEP]);
    		var _c0 = [];
@@ -1777,7 +1840,7 @@ var theWebUI =
 			viewSize += s * (table.rowdata[sId].enabled);
 		}
 		$('#viewrows').text(table.viewRows + '/' + table.rows);
-		$('#viewrows_size').text(theConverter.bytes(viewSize, 2));
+		$('#viewrows_size').text(theConverter.bytes(viewSize, 'table'));
 	},
 
 	setSpeedValues: function(tul,tdl)
@@ -1885,6 +1948,17 @@ var theWebUI =
 // labels
 //
 
+	createTeg: function(str) {
+			var tegId = "teg_"+this.lastTeg;
+			this.lastTeg++;
+			var el = this.createSelectableLabelElement(tegId, str, theWebUI.tegContextMenu).addClass('teg');
+			$("#lblf").append( el );
+			this.tegs[tegId] = { val: str };
+			this.updateTegs([this.tegs[tegId]]);
+			this.updateTegLabels([tegId]);
+			return el;
+	},
+
 	setTeg: function(str)
 	{
 		str = str.trim();
@@ -1896,13 +1970,7 @@ var theWebUI =
 					this.switchLabel($$(id));
 					return;
 				}
-			var tegId = "teg_"+this.lastTeg;
-			this.lastTeg++;
-			var el = this.createSelectableLabelElement(tegId, str, theWebUI.tegContextMenu).addClass('teg');
-			$("#lblf").append( el );
-			this.tegs[tegId] = { val: str };
-			this.updateTegs([this.tegs[tegId]]);
-			this.updateTegLabels([tegId]);
+			const el = this.createTeg(str);
 			this.resetLabels();
 			this.switchLabel(el[0]);
 		}
@@ -2007,6 +2075,11 @@ var theWebUI =
 		return(false);
 	},
 
+	cLabelText: function(lbl) {
+		const l = this.cLabels[lbl];
+		return l.path.slice(l.level).join('/');
+	},
+
 	/**
 	 *
 	 * @param {Object.<string, number>} c - <label_name, count>
@@ -2019,26 +2092,82 @@ var theWebUI =
 		lbls.sort();
 
 		this.cLabels = {};
+		let prevCustomEle = null;
 		for(var lbl of lbls)
 		{
 			var id = "-_-_-" + lbl + "-_-_-";
+			this.labels[id] = { cnt: c[lbl], size: s[lbl] };
 			if (!this.staticLabels.includes(lbl))
 			{
 				// use custom label
-				this.cLabels[lbl] = 1;
-				if(!$$(id))
-				{
-					p.append( this.createSelectableLabelElement(id, lbl, theWebUI.labelContextMenu));
+				let path = [];
+				for(const nodeText of lbl.split('/')) {
+					path.push(nodeText);
+					const clbl = path.join('/');
+					const cid = '-_-_-' + clbl + '-_-_-';
+					if (this.settings['webui.show_empty_path_labels'])
+					{
+						// add empty non-leaf labels
+						if (!(cid in this.labels))
+							this.labels[cid] = { cnt: 0, size: 0 };
+					}
+					else if (cid in this.labels && this.labels[cid].cnt === 0 && cid !== id)
+					{
+						// delete empty non-leaf labels
+						// (keep empty leaf labels since they can not be recovered with show_empty_path_labels = true)
+						delete this.labels[cid];
+					}
+					if (!(clbl in this.cLabels) && cid in this.labels)
+					{
+						this.cLabels[clbl] = {
+							path: path.slice(),
+							level: path.length-1,
+						};
+						let ele = $$(cid);
+						if(!ele) {
+							ele = this.createSelectableLabelElement(cid, clbl, theWebUI.labelContextMenu);
+							if (cid === this.actLbls['plabel_cont']) {
+								$('#plabel_cont').find('.sel').removeClass('sel');
+								ele.addClass('sel');
+							}
+							if (prevCustomEle) {
+								ele.insertAfter(prevCustomEle);
+							} else {
+								p.append(ele);
+							}
+						}
+						prevCustomEle = ele;
+					}
 				}
 			}
-			this.labels[id] = { cnt: c[lbl], size: s[lbl] };
+		}
+		if ( !this.settings['webui.show_empty_path_labels'] ) {
+			// flatten tree where parent nodes are missing
+			for (const lbl in this.cLabels) {
+				while (true) {
+					const label = this.cLabels[lbl];
+					const omittedPath = label.path.slice(0, label.level);
+					if ( !omittedPath.length || (omittedPath.join('/') in this.cLabels))
+						break;
+					$($$('-_-_-' + omittedPath.join('/') + '-_-_-')).remove();
+					this.cLabels[lbl].level--;
+				}
+			}
+		}
+		// determine for each cLabel if it has a next sibling
+		let hasNext = [];
+		for (const lbl of Object.keys(this.cLabels).reverse()) {
+			let label = this.cLabels[lbl];
+			hasNext = hasNext.slice(0, label.level+1);
+			label.hasNext = [...hasNext];
+			hasNext[label.level] = true;
 		}
 		var actDeleted = false;
 		var pLabels = ['nlb'].concat(Object.keys(this.cLabels));
 		p.children().each(function(ndx,val)
 		{
 			var id = val.id;
-			var lbl = (id&&id.substr(5, id.length - 10))||'nlb';
+			var lbl = (id&&theWebUI.idToLbl(id))||'nlb';
 			if (!pLabels.includes(lbl)) {
 				$(val).remove();
 				if(theWebUI.actLbls["plabel_cont"] == id)
@@ -2049,7 +2178,7 @@ var theWebUI =
 		{
 			this.switchLabel($("#plabel_cont .-_-_-all-_-_-").get(0))
 		}
-   	},
+	},
 
 	/**
 	 *
@@ -2125,30 +2254,54 @@ var theWebUI =
 
 	createSelectableLabelElement: function(id, text, onClick) {
 		return( $("<LI>").attr("id",id)
-		.append($('<span>').addClass('label-text').text(text))
-		.append($('<span>').addClass('label-count').text(0))
-		.append($('<span>').addClass('label-size'))
+		.append($('<div>').addClass('label-prefix').hide())
+		.append($('<div>').addClass('label-icon'))
+		.append($('<div>').addClass('label-text').text(text))
+		.append($('<div>').addClass('label-count').text(0))
+		.append($('<div>').addClass('label-size').hide())
 		.attr("title",text+" (0)")
-		.mouseclick(onClick))
-		.addClass("cat");
+		.mouseclick(onClick)
+		.addClass("cat"));
 	},
 
-	updateLabel: function(label, count, size, showSize) {
+
+	sizeDecimalPlaces: function(context, unit) {
+		let n = parseInt(this.settings['webui.size_decimal_places.'+context+'.'+unit]);
+		n = isNaN(n) ? parseInt(this.settings['webui.size_decimal_places.'+context+'.default']) : n;
+		return isNaN(n) ? (context === 'other' ? 0 : this.sizeDecimalPlaces('other', unit)) : n;
+	},
+
+	updateLabel: function(label, count, size, showSize, text, prefix, titleText) {
 		var li = $(label);
-		var lblSize = theConverter.bytes(size, 2);
-		li.children('.label-count').text(count);
+		var pfx = li.children('.label-prefix');
+		if (!prefix || !prefix.length) {
+			pfx.hide();
+		} else {
+			pfx.empty();
+			for (var c of prefix) {
+				pfx.append($('<div>').text(c));
+			}
+			pfx.show();
+		}
 		var txt = li.children('.label-text');
+		if (text)
+			txt.text(text);
+		var lblSize = theConverter.bytes(size, 'catlist');
+		li.children('.label-count').text(count);
 		li.attr('title',
-			txt.contents().not(txt.children('script')).text() + 
+			(titleText||text||txt.contents().not(txt.children('script')).text()) +
 			' ('+ count + ( showSize ? ' ; '+ lblSize : '') +')');
 		var sizeSpan = li.children('.label-size');
 		sizeSpan.text(lblSize);
-		if (showSize)
-		{
+		if (size && showSize) {
 			sizeSpan.show();
 		} else {
 			sizeSpan.hide();
 		}
+	},
+
+	idToLbl: function(id) {
+		return(id.substr(5, id.length - 10));
 	},
 
 	updateLabels: function(wasRemoved)
@@ -2159,12 +2312,18 @@ var theWebUI =
 
 		for(var k in this.labels)
 			if(k.substr(0, 5) == "-_-_-") {
-				var lbl = k.substr(5, k.length - 10);
+				const lbl = this.idToLbl(k);
+				const customLabel = lbl in this.cLabels && lbl;
+				const showTree = customLabel && this.settings['webui.show_label_path_tree'];
 				this.updateLabel(
 					$$(k),
 					this.labels[k].cnt,
 					this.labels[k].size,
-					this.staticLabels.includes(lbl) && lbl != 'nlb' ? this.settings["webui.show_statelabelsize"] : this.settings["webui.show_labelsize"]);
+					this.staticLabels.includes(lbl) && lbl != 'nlb' ? this.settings["webui.show_statelabelsize"] : this.settings["webui.show_labelsize"],
+					(showTree && this.cLabelText(lbl))||customLabel,
+					showTree && theFormatter.treePrefix(this.cLabels[lbl]),
+					customLabel,
+				);
 			}
 	},
 
@@ -2186,20 +2345,28 @@ var theWebUI =
 
 			this.actLbls[labelType] = obj.id;
 
-			var table = this.getTable("trt");
-			table.scrollTo(0);
-			for(var k in this.torrents)
-				this.filterByLabel(k);
-			table.clearSelection();
-			if(this.dID != "")
-			{
-				this.dID = "";
-				this.clearDetails();
-			}
-			table.refreshRows();
+			this.filterTorrentTable();
 
-			this.updateViewRows(table);
+			if (this.settings['webui.open_tegs.keep']
+				||this.settings['webui.selected_labels.keep'])
+				this.save();
 		}
+	},
+
+	filterTorrentTable: function() {
+		var table = this.getTable("trt");
+		table.scrollTo(0);
+		for(var k in this.torrents)
+			this.filterByLabel(k);
+		table.clearSelection();
+		if(this.dID != "")
+		{
+			this.dID = "";
+			this.clearDetails();
+		}
+		table.refreshRows();
+
+		this.updateViewRows(table);
 	},
 
 	filterByLabel: function(sId)
@@ -2336,8 +2503,8 @@ var theWebUI =
    		if((this.dID != "") && this.torrents[this.dID])
    		{
 	   		var d = this.torrents[this.dID];
-                        $("#dl").text(theConverter.bytes(d.downloaded,2));
-			$("#ul").text(theConverter.bytes(d.uploaded,2));
+                        $("#dl").text(theConverter.bytes(d.downloaded,'details'));
+			$("#ul").text(theConverter.bytes(d.uploaded,'details'));
 			$("#ra").html( (d.ratio ==- 1) ? "&#8734;" : theConverter.round(d.ratio/1000,3));
 			$("#us").text(theConverter.speed(d.ul));
 			$("#ds").text(theConverter.speed(d.dl));
@@ -2345,7 +2512,7 @@ var theWebUI =
 			$("#se").text(d.seeds_actual + " " + theUILang.of + " " + d.seeds_all + " " + theUILang.connected);
 			$("#pe").text(d.peers_actual + " " + theUILang.of + " " + d.peers_all + " " + theUILang.connected);
 			$("#et").text(theConverter.time(Math.floor((new Date().getTime()-theWebUI.deltaTime)/1000-iv(d.state_changed)),true));
-			$("#wa").text(theConverter.bytes(d.skip_total,2));
+			$("#wa").text(theConverter.bytes(d.skip_total, 'details'));
 	        	$("#bf").text(d.base_path);
 	        	$("#co").text(theConverter.date(iv(d.created)+theWebUI.deltaTime/1000));
 			$("#tu").text($type(this.trackers[this.dID]) && $type(this.trackers[this.dID][d.tracker_focus]) ? this.trackers[this.dID][d.tracker_focus].name : '');
@@ -2369,7 +2536,7 @@ var theWebUI =
 				}
 			}
 			$("#cmt").html( strip_tags(url,'<a><b><strong>') );
-			$("#dsk").text((d.free_diskspace=='0') ? '' : theConverter.bytes(d.free_diskspace,2));
+			$("#dsk").text((d.free_diskspace=='0') ? '' : theConverter.bytes(d.free_diskspace,'details'));
 	   		this.updatePeers();
 		}
 	},
@@ -2630,6 +2797,8 @@ var theWebUI =
 	{
 		$("#tooltip").remove();
 		this.activeView=id;
+		if (this.settings['webui.selected_tab.keep'])
+			this.save();
 	},
 
 	request: function(qs, onComplite, isASync)
@@ -2647,15 +2816,14 @@ var theWebUI =
 		Ajax(this.url + qs, isASync, onComplite, null, this.error, -1);
    	},
 
-   	show: function()
-   	{
-   		if($("#cover").is(":visible"))
+	show: function()
+	{
+		if($("#cover").is(":visible"))
 		{
 			$("#cover").hide();
 			setTimeout(theWebUI.resize, 0);
-			theTabs.show("lcont");
 		}
-   	},
+	},
 
    	msg: function(s)
    	{
