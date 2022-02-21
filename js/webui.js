@@ -162,11 +162,14 @@ var theWebUI =
 		"webui.speedintitle":		0,
 		"webui.speedgraph.max_seconds": 600,
 		"webui.log_autoswitch":		1,
+		"webui.labelsize_rightalign":		0,
 		"webui.show_labelsize":		1,
 		"webui.show_searchlabelsize":	0,
 		"webui.show_statelabelsize":	0,
 		"webui.show_label_path_tree":	1,
 		"webui.show_empty_path_labels":	0,
+		"webui.show_label_text_overflow": 0,
+		"webui.show_open_status":	1,
 		"webui.register_magnet":	0,
 		...(() => {
 			const defaults = {};
@@ -190,6 +193,12 @@ var theWebUI =
 		speedUL: 	0,
 		DL: 		0,
 		UL: 		0
+	},
+	stopen:
+	{
+		http: 	-1,
+		sock: 	-1,
+		fd: 	-1,
 	},
 	sTimer: 	null,
 	updTimer: 	null,
@@ -889,13 +898,13 @@ var theWebUI =
 			theWebUI.settings["webui."+ndx+".rev2"] = table.obj.secRev;
 		});
 
-		this.settings['webui.selected_tab.last'] = this.activeView;
+		theWebUI.settings['webui.selected_tab.last'] = theWebUI.activeView;
 		const savedActLbls = {}
 		for (const labelType of ['pstate_cont', 'plabel_cont', 'flabel_cont', 'ptrackers_cont']) {
-			savedActLbls[labelType] = this.actLbls[labelType];
+			savedActLbls[labelType] = theWebUI.actLbls[labelType];
 		}
-		this.settings['webui.selected_labels.last'] = savedActLbls;
-		this.settings['webui.open_tegs.last'] = Object.values(this.tegs).map(t => t.val);
+		theWebUI.settings['webui.selected_labels.last'] = savedActLbls;
+		theWebUI.settings['webui.open_tegs.last'] = Object.values(theWebUI.tegs).map(t => t.val);
 		var cookie = {};
 		theWebUI.settings["webui.search"] = theSearchEngines.current;
 		for(const [i,v] of Object.entries(theWebUI.settings))
@@ -1815,9 +1824,12 @@ var theWebUI =
 		this.updateTegs(Object.values(this.tegs));
 		this.updateTegLabels(Object.keys(this.tegs));
 		this.loadTorrents();
-		this.getTotal();
 
 		this.updateViewRows(table)
+
+		this.getTotal();
+		if (this.settings['webui.show_open_status'])
+			this.getOpenStatus();
 
 		// Cleanup memory leaks
 		tArray = null;
@@ -1875,6 +1887,16 @@ var theWebUI =
    	addTotal: function( d )
 	{
 	        $.extend(this.total,d);
+	},
+
+	getOpenStatus: function()
+	{
+		this.request("?action=getopen", [this.addOpenStatus, this]);
+	},
+
+	addOpenStatus: function(stopen)
+	{
+		Object.assign(this.stopen, stopen);
 	},
 
 	/**
@@ -2293,11 +2315,10 @@ var theWebUI =
 			' ('+ count + ( showSize ? ' ; '+ lblSize : '') +')');
 		var sizeSpan = li.children('.label-size');
 		sizeSpan.text(lblSize);
-		if (size && showSize) {
+		if (size && showSize)
 			sizeSpan.show();
-		} else {
+		else
 			sizeSpan.hide();
-		}
 	},
 
 	idToLbl: function(id) {
@@ -2306,6 +2327,15 @@ var theWebUI =
 
 	updateLabels: function(wasRemoved)
 	{
+		const catlist = $($$('CatList'));
+		if (theWebUI.settings['webui.labelsize_rightalign'])
+			catlist.addClass('rightalign-labelsize');
+		else
+			catlist.removeClass('rightalign-labelsize');
+		if (theWebUI.settings['webui.show_label_text_overflow'])
+			catlist.removeClass('hide-textoverflow');
+		else
+			catlist.addClass('hide-textoverflow');
 		this.updateAllFilterLabel('pstate_cont', this.settings["webui.show_statelabelsize"]);
 		this.updateAllFilterLabel('plabel_cont', this.settings["webui.show_labelsize"]);
 		this.updateAllFilterLabel('flabel_cont', this.settings["webui.show_searchlabelsize"]);
@@ -2572,6 +2602,19 @@ var theWebUI =
 	        $("#stdown_speed").text(dl);
 	        $("#stdown_limit").text((self.total.rateDL>0 && self.total.rateDL<327625*1024) ? theConverter.speed(self.total.rateDL) : theUILang.no);
 	        $("#stdown_total").text(theConverter.bytes(self.total.DL));
+
+		if (self.settings['webui.show_open_status']) {
+			for (const opnType of ['http', 'sock', 'fd']) {
+				const ele = $($$('stopen_'+opnType+'_count'));
+				if (self.stopen[opnType] > -1)
+					ele.text(self.stopen[opnType] + ' ' + opnType).show();
+				else
+					ele.hide()
+			}
+			$("#st_fd").show();
+		} else {
+			$("#st_fd").hide();
+		}
 	},
 
 	setDLRate: function(spd)

@@ -101,6 +101,13 @@ div#CatList .label-prefix div { margin-right: 0px; width: 12px; }
 #-_-_-iac-_-_- .label-icon {background-position: 0px -32px;}
 #-_-_-err-_-_- .label-icon {background-position: 0px -96px;}
 .label-count,.label-size { background-color: #F0F0F0; padding: 0.1em 0.3em 0.1em 0.3em; border-radius: 0.8em; }
+#CatList.rightalign-labelsize .label-size {
+	margin-left: auto;
+}
+#CatList.hide-textoverflow .label-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 div#CatList ul li.RSS .label-icon { background-position: 0px -208px}
 div#CatList ul li.disRSS .label-icon { background-position: 0px -192px}
 #flabel_cont li:not(.-_-_-all-_-_-) .label-icon { background-position: 0px -32px; }
@@ -282,11 +289,14 @@ div#tadd select { width: 220px }
 .decimalDigitEdit input[type=number] { padding: 1px; margin: 0; width: 3em; }
 .decimalDigitEdit tr:first-child th { text-align: center; }
 .decimalDigitEdit tr th { text-align: left; }
-.userInterfaceOptions {  height: 150px; }
+.userInterfaceOptions {  max-height: 180px; }
+.userInterfaceOptions > div { max-width: 50% }
 .optionColumn { display: flex; justify-content: space-between; flex-flow: column wrap; }
 .optionColumn input[type=number],.optionColumn select { padding: 1px; margin: 0.1em 0.5em; width: 6em; }
 .optionColumn div { padding-left: 0; }
 .statuscell td { padding: 0 }
+#st_fd .sthdr { padding-left: 8px; }
+#st_fd .stval { text-align: center; width: 4.3em; }
 #st_system .sthdr { padding-left: 8px }
 
 .ie fieldset {padding: 5px}

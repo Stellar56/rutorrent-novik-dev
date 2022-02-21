@@ -12,4 +12,3 @@ $useExternal = 'mktorrent';		// Valid choices:
 $pathToCreatetorrent = '/usr/bin/mktorrent';	// Something like /bin/createtorrent, or /bin/transmissioncli. If empty, program will be found in PATH.
 
 $recentTrackersMaxCount = 15;
-
